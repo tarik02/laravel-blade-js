@@ -3,15 +3,15 @@
 
 #### Setup
 To start work with blade, you must to create blade `Renderer`:
-```ecmascript 6
+```
 	const BladeRenderer = require('laravel-blade-js').Renderer;
 ```
 And create new instance of `BladeRenderer`:
-```ecmascript 6
+```
 	let renderer = new BladeRenderer();
 ```
 You can set renderer config:
-```ecmascript 6
+```
 	/**
     	 * @param {Object}  config
     	 * @param {String}  [config.views] -        Input views folder, default is `__dirname/views`.
@@ -26,7 +26,7 @@ You can set renderer config:
 
 #### View rendering
 To render your view('*.bjs'):
-```ecmascript 6
+```
 	/**
     	 * @param {String} view         - View name to render
     	 * @param {Object} [properties] - Properties can be used inside view
@@ -38,7 +38,7 @@ To render your view('*.bjs'):
 ```
 
 ##### Example
-```ecmascript 6
+```
     bladeRenderer.render('index', {
     	'content': 'Hello world'
     }, {
@@ -47,7 +47,7 @@ To render your view('*.bjs'):
 ```
 
 Or async:
-```ecmascript 6
+```
 	/**
     	 * @param {String} view         - View name to render
     	 * @param {Object} [properties] - Properties can be used inside view
@@ -60,7 +60,7 @@ Or async:
 
 #### Custom functions and variables
 Add custom blade function:
-```ecmascript 6
+```
 	/**
     	 * Adds blade function(start at @).
     	 *
@@ -74,7 +74,7 @@ Add custom blade function:
 ```
 
 ##### Example
-```ecmascript 6
+```
     bladeRenderer.registerFunction('lang', {
         callback: parameters => `trans(${parameters})`, // Will compile blade '@lang(...)' to javascript 'trans(...)'
 
@@ -84,7 +84,7 @@ Add custom blade function:
 ```
 
 Add custom blade variable(function):
-```ecmascript 6
+```
     /**
      * Adds a shared variable for all views.
      *
@@ -95,7 +95,7 @@ Add custom blade variable(function):
 ```
 
 ##### Example
-```ecmascript 6
+```
     /*
      * {Object} view is object that contains {properties, settings}.
      * Warning! view.properties can be empty in nested view.
