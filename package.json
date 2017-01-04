@@ -1,6 +1,6 @@
 {
   "name": "laravel-blade-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Laravel's blade templating engine for JavaScript",
   "main": "index.js",
   "scripts": {
@@ -14,10 +14,10 @@
   "author": "Tarik02",
   "license": "ISC",
   "dependencies": {
+    "escape-html": "^1.0.3",
     "extend": "^3.0.0",
     "js-string-escape": "^1.0.1",
     "md5": "^2.2.1",
-    "mkdirp": "^0.5.1",
-    "stringbuilder": "0.0.11"
+    "mkdirp": "^0.5.1"
   }
 }

@@ -4,7 +4,6 @@ let extend = require('extend');
 let mkdirp = require('mkdirp');
 let md5 = require('md5');
 let fs = require('fs');
-let StringBuilder = require('stringbuilder');
 let ViewNotFoundError = require('./ViewNotFoundError');
 let escape = require('js-string-escape');
 var escapeHTML = require('escape-html');
@@ -39,37 +38,43 @@ module.exports = class Renderer {
 		this.registerFunction('if', {
 			callback: parameters => `if (${parameters}) {`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('else', {
 			callback: parameters => `} else {`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('elseif', {
 			callback: parameters => `} else if (${parameters}) {`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('endif', {
 			callback: parameters => `}`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('unless', {
 			callback: parameters => `if (!(${parameters})) {`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('endunless', {
 			callback: parameters => `}`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 
@@ -77,13 +82,15 @@ module.exports = class Renderer {
 		this.registerFunction('for', {
 			callback: parameters => `for (${parameters}) {`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('endfor', {
 			callback: parameters => `}`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('foreach', {
@@ -101,13 +108,15 @@ module.exports = class Renderer {
 				return `{ let $__items = $__utils.forEach(${array});\nfor (let $__i = 0, $__entry = $__items[$__i] || [], ${key} = $__entry[0], ${value} = $__entry[1]; $__i < $__items.length; ++$__i, $__entry = $__items[$__i] || [], ${key} = $__entry[0], ${value} = $__entry[1]) {`;
 			},
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('endforeach', {
 			callback: parameters => `} }`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('forelse', {
@@ -125,31 +134,36 @@ module.exports = class Renderer {
 				return `{ let $__items = $__utils.forEach(${array});\nfor (let $__i = 0, $__entry = $__items[$__i] || [], ${key} = $__entry[0], ${value} = $__entry[1]; $__i < $__items.length; ++$__i, $__entry = $__items[$__i] || [], ${key} = $__entry[0], ${value} = $__entry[1]) {`;
 			},
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('empty', {
 			callback: parameters => `} if ($__items.length === 0) {`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('endforelse', {
 			callback: parameters => `} }\n`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('while', {
 			callback: parameters => `while (${parameters}) {`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('endwhile', {
 			callback: parameters => `}`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('continue', {
@@ -161,7 +175,8 @@ module.exports = class Renderer {
 				return `if (${parameters}) {\ncontinue;\n}`;
 			},
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('break', {
@@ -173,7 +188,8 @@ module.exports = class Renderer {
 				return `if (${parameters}) {\nbreak;\n}`;
 			},
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 
@@ -181,19 +197,22 @@ module.exports = class Renderer {
 		this.registerFunction('push', {
 			callback: parameters => `$__utils.push(${parameters}, (function() { let $__result = '';`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('endpush', {
 			callback: parameters => `return $__result;})());`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('stack', {
 			callback: parameters => `$__utils.stack(${parameters});`,
 
-			output: true
+			output: true,
+			escape: false
 		});
 
 
@@ -201,13 +220,15 @@ module.exports = class Renderer {
 		this.registerFunction('extends', {
 			callback: parameters => `$__utils.extends($__viewObject, ${parameters});`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('yield', {
 			callback: parameters => `$__utils.yield(${parameters});`,
 
-			output: true
+			output: true,
+			escape: false
 		});
 
 		this.registerFunction('section', {
@@ -223,31 +244,36 @@ module.exports = class Renderer {
 				return `$__utils.section(${parameters}, function($__parent) { let $__result = ''`;
 			},
 
-			output: true
+			output: true,
+			escape: false
 		});
 
 		this.registerFunction('endsection', {
 			callback: parameters => `return $__result;});`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('overwrite', {
 			callback: parameters => `return $__result;});`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('show', {
 			callback: parameters => `return $__result;}, true);`,
 
-			output: false
+			output: false,
+			escape: false
 		});
 
 		this.registerFunction('parent', {
 			callback: parameters => `$__parent`,
 
-			output: true
+			output: true,
+			escape: false
 		});
 
 
@@ -255,13 +281,15 @@ module.exports = class Renderer {
 		this.registerFunction('include', {
 			callback: parameters => `$__utils.include($__viewObject, ${parameters});`,
 
-			output: true
+			output: true,
+			escape: false
 		});
 
 		this.registerFunction('each', {
 			callback: parameters => `$__utils.each($__viewObject, ${parameters});`,
 
-			output: true
+			output: true,
+			escape: false
 		});
 
 
@@ -291,7 +319,7 @@ module.exports = class Renderer {
 			},
 			
 			include: (parent, view, parameters = null) => {
-				return this.render(view, parameters, parent.settings, parent);
+				return this.render(view, parameters, parent.settings);
 			},
 
 			each: (parent, view, array, variable, empty = null) => {
@@ -384,7 +412,7 @@ module.exports = class Renderer {
 	}
 
 	/**
-	 * @param {config}
+	 * @param {Object} config
 	 * @param {String}  [config.views] -        Input views folder, default is `__dirname/views`.
 	 * @param {Boolean} [config.cacheEnabled] - Enable or disable compiled view cache, default is true.
 	 * @param {String}  [config.cache] -        Compiled views cache folder, default is `__dirname/cache`.
@@ -407,12 +435,14 @@ module.exports = class Renderer {
 	 * @param {String}   name -            The function name
 	 * @param {Object}   object -          The function object
 	 * @param {Function} object.callback - The function callback(parameters). Must return expression will be instead of blade function.
-	 * @param {Boolean}  [object.output] - If true, this function has an output. Default is false.
+	 * @param {Boolean}  [object.output] - If true, the function has an output. Default is false.
+	 * @param {Boolean}  [object.escape] - If true, output of the function will be escaped(html). Default is false.
 	 */
 	registerFunction(name, object) {
 		object = extend({
 			callback: () => '',
-			output: false
+			output: false,
+			escape: false
 		}, object);
 
 		this._functions[name] = object;
@@ -435,7 +465,7 @@ module.exports = class Renderer {
 	 *
 	 * @return {String}
 	 */
-	render(view, properties = {}, settings = {}, parent = null) {
+	render(view, properties = {}, settings = {}) {
 		try {
 			let cachedData = this._cachedViewsData[view];
 			let viewId = this._viewId++;
@@ -446,12 +476,8 @@ module.exports = class Renderer {
 				settings: settings
 			};
 
-			if (parent !== null) {
-				viewObject.settings = parent.settings;
-			}
-
 			if ((cachedData) && (this._config.production)) {
-				return this._renderView(view, cachedData.func, properties, viewId);
+				return this._renderView(view, cachedData.func, properties, viewId, viewObject);
 			}
 
 
@@ -730,7 +756,11 @@ module.exports = class Renderer {
 			let result = functionData.callback(parameters);
 
 			if (functionData.output) {
-				result = `$__result += ${result};`;
+				if (functionData.escape) {
+					result = `$__result += $__utils.escapeHTML(${result});`;
+				} else {
+					result = `$__result += ${result};`;
+				}
 			}
 
 			return result + '\n';
