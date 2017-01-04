@@ -1,6 +1,6 @@
 {
 	"name": "laravel-blade-js",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Laravel's blade templating engine for JavaScript",
 	"main": "index.js",
 	"scripts": {
