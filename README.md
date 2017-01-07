@@ -88,8 +88,9 @@ Add custom blade variable(function):
 	/**
 	 * Adds a shared variable for all views.
 	 *
-	 * @param {String} name  - Name of shared variable
-	 * @param          value - Value of shared variable
+	 * @param {String}  name        - Name of shared variable
+	 * @param           value       - Value of shared variable
+	 * @param {Boolean} interactive - If true, value must be a function and it will be called on view rendering start
 	 */
 	Renderer.registerVariable(name, value);
 ```

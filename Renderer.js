@@ -442,11 +442,15 @@ module.exports = class Renderer {
 	/**
 	 * Adds a shared variable for all views.
 	 *
-	 * @param {String} name  - Name of shared variable
-	 * @param          value - Value of shared variable
+	 * @param {String}  name        - Name of shared variable
+	 * @param           value       - Value of shared variable
+	 * @param {Boolean} interactive - If true, value must be a function and it will be called on view rendering start
 	 */
-	registerVariable(name, value) {
-		this._variables[name] = value;
+	registerVariable(name, value, interactive = false) {
+		this._variables[name] = {
+			value: value,
+			interactive: interactive
+		};
 	}
 
 	/**
@@ -568,8 +572,12 @@ module.exports = class Renderer {
 	
 	for (let key in $__sharedVariables) {
 		if ($__sharedVariables.hasOwnProperty(key)) {
-			if (typeof $__sharedVariables[key] === 'function') {
-				eval(\`var \${key} = $__sharedVariables[key].bind(null, $__viewObject);\`);
+			if (typeof $__sharedVariables[key].value === 'function') {
+				if ($__sharedVariables[key]._interactive) {
+					eval(\`var \${key} = $__sharedVariables[key]($__viewObject);\`);
+				} else {
+					eval(\`var \${key} = $__sharedVariables[key].bind(null, $__viewObject);\`);
+				}
 			} else {
 				eval(\`var \${key} = $__sharedVariables[key];\`);
 			}
