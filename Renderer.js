@@ -573,13 +573,13 @@ module.exports = class Renderer {
 	for (let key in $__sharedVariables) {
 		if ($__sharedVariables.hasOwnProperty(key)) {
 			if (typeof $__sharedVariables[key].value === 'function') {
-				if ($__sharedVariables[key]._interactive) {
-					eval(\`var \${key} = $__sharedVariables[key]($__viewObject);\`);
+				if ($__sharedVariables[key].interactive) {
+					eval(\`var \${key} = $__sharedVariables[key].value($__viewObject);\`);
 				} else {
-					eval(\`var \${key} = $__sharedVariables[key].bind(null, $__viewObject);\`);
+					eval(\`var \${key} = $__sharedVariables[key].value.bind(null, $__viewObject);\`);
 				}
 			} else {
-				eval(\`var \${key} = $__sharedVariables[key];\`);
+				eval(\`var \${key} = $__sharedVariables[key].value;\`);
 			}
 		}
 	}\n`);
