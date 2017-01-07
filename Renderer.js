@@ -225,7 +225,7 @@ module.exports = class Renderer {
 		});
 
 		this.registerFunction('yield', {
-			callback: parameters => `$__utils.yield(${parameters});`,
+			callback: parameters => this._utils.yield(parameters),
 
 			output: true,
 			escape: false
@@ -238,10 +238,10 @@ module.exports = class Renderer {
 				let parametersArray = parameters.split(',').map(param => param.trim());
 
 				if (parametersArray.length === 2) {
-					return `$__utils.section(${parameters});`;
+					return `$__utils.section($__viewObject.sections, ${parameters});`;
 				}
 
-				return `$__utils.section(${parameters}, function($__parent) { let $__result = ''`;
+				return `$__utils.section($__viewObject.sections, ${parameters}, function($__parent) { let $__result = ''`;
 			},
 
 			output: true,
@@ -359,8 +359,7 @@ module.exports = class Renderer {
 
 			viewBegin: viewId => {
 				this._utils._views.push({
-					parent: null,
-					sections: {  }
+					parent: null
 				});
 
 				return '';
@@ -370,7 +369,7 @@ module.exports = class Renderer {
 				let viewData = this._utils._getCurrentViewData();
 
 				if (viewData.parent) {
-					result = this._utils.include(parent, viewData.parent, viewData.parentParameters);
+					result = this.render(viewData.parent, viewData.parentParameters, parent.settings, viewData.parentView);
 				}
 
 				this._utils._views.pop();
@@ -385,25 +384,17 @@ module.exports = class Renderer {
 			},
 
 			yield: name => {
-				let section = this._utils._getPrevViewData().sections[name];
-
-				if (section) {
-					return section.data();
-				}
-
-				return '';
+				return `($__viewObject.parentView.sections[${name}] || (() => ''))()`;
 			},
 
-			section: (name, data, show = false) => {
+			section: (sections, name, data, show = false) => {
 				if (show) {
 					return this._utils._getPrevViewData().sections[name].data(data());
 				} else {
-					this._utils._getCurrentViewData().sections[name] = {
-						data: (typeof data === 'function') ? (data) : (() => data)
-					};
+					sections[name] = (typeof data === 'function') ? (data) : (() => data);
 				}
 
-				return () => '';
+				return '';
 			},
 
 			_getCurrentViewData: () => this._utils._views[this._utils._views.length - 1],
@@ -465,15 +456,17 @@ module.exports = class Renderer {
 	 *
 	 * @return {String}
 	 */
-	render(view, properties = {}, settings = {}) {
+	render(view, properties = {}, settings = {}, parentView = {}) {
 		try {
 			let cachedData = this._cachedViewsData[view];
 			let viewId = this._viewId++;
 
 			let viewObject = {
 				view: view,
+				parentView: parentView,
 				properties: properties,
-				settings: settings
+				settings: settings,
+				sections: { __proto__: parentView.sections }
 			};
 
 			if ((cachedData) && (this._config.production)) {
@@ -482,7 +475,8 @@ module.exports = class Renderer {
 
 
 			let viewName = this._config.views + '/' + view.replace('.', '/') + '.bjs';
-			let cacheName = this._config.cache + '/' + md5(viewName);
+			//let cacheName = this._config.cache + '/' + md5(viewName);
+			let cacheName = this._config.cache + '/' + view + '.cache.js';
 
 			if (!fs.existsSync(viewName)) {
 				throw new ViewNotFoundError(view);
@@ -511,6 +505,7 @@ module.exports = class Renderer {
 			return this._renderNewView(view, renderedContent, properties, viewId, viewObject);
 		} catch (error) {
 			console.error(`Failed to render view ${view}`);
+
 			throw error;
 		}
 	}
