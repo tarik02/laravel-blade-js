@@ -10,7 +10,7 @@ script:
   - yarn --version
 
   - yarn lint
-  - yarn build
+  - yarn build:prod
   - yarn test
 
 notifications:
