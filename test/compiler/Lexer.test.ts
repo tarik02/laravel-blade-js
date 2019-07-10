@@ -146,5 +146,26 @@ Hello World
         },
       ]);
     });
+
+    it('sample-2', () => {
+      lexAssert(`
+@include('view.name', {
+  'foo': ['hello )))', '(( world'],
+  'bar': 5 * (3 + 4 * (5 - 2)),
+})
+`.trim(), [
+        {
+          type: 'function',
+          name: 'include',
+          args: [
+            `'view.name'`,
+            `{
+  'foo': ['hello )))', '(( world'],
+  'bar': 5 * (3 + 4 * (5 - 2)),
+}`,
+          ],
+        },
+      ]);
+    });
   });
 });

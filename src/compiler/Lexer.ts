@@ -1,6 +1,7 @@
-import {Char} from '../string/Char';
-import {CharStream} from './CharStream';
-import {Token} from './Token';
+import { Char } from '../string/Char';
+import { CharStream } from './CharStream';
+import { Token } from './Token';
+import { inspect } from 'util';
 
 export class Lexer {
   private readonly input: CharStream;
@@ -130,10 +131,10 @@ export class Lexer {
           input.skip(i + 1);
 
           const args: string[] = [];
-          let bracesDepth = 1;
+          const braces: string[] = [')'];
           let ch: string;
           let arg = '';
-          while ((ch = input.next()) !== ')' || bracesDepth !== 1) {
+          while ((ch = input.next()) !== ')' || braces.length !== 1) {
             switch (ch) {
             case '\'':
             case '"': {
@@ -154,16 +155,35 @@ export class Lexer {
               break;
             }
             case ',':
-              args.push(arg.trim());
-              arg = '';
+              if (braces.length === 1) {
+                args.push(arg.trim());
+                arg = '';
+              } else {
+                arg += ch;
+              }
               break;
             case '(':
               arg += ch;
-              ++bracesDepth;
+              braces.push(')');
+              break;
+            case '{':
+              arg += ch;
+              braces.push('}');
+              break;
+            case '[':
+              arg += ch;
+              braces.push(']');
               break;
             case ')':
+            case '}':
+            case ']':
               arg += ch;
-              --bracesDepth;
+
+              const expected = braces.pop();
+              if (expected !== ch) {
+                // TODO: Specific error class
+                throw new Error(`expected ${inspect(expected)}, got ${inspect(ch)}`);
+              }
               break;
             default:
               arg += ch;
