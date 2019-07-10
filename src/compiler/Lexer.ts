@@ -137,7 +137,8 @@ export class Lexer {
           while ((ch = input.next()) !== ')' || braces.length !== 1) {
             switch (ch) {
             case '\'':
-            case '"': {
+            case '"':
+            case '`': {
               let escape = false;
               let ch2: string;
 
