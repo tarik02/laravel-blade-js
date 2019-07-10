@@ -54,7 +54,7 @@ Hello World
   });
 
   describe('samples', () => {
-    it('sample-1', () => {
+    it('sample-1 (complex input)', () => {
       lexAssert(`
 {{-- this example is taken from https://laravel.com/docs/5.8/blade#template-inheritance --}}
 
@@ -130,7 +130,7 @@ Hello World
       ]);
     });
 
-    it('sample-2', () => {
+    it('sample-2 (function arguments with nested braces and quotes)', () => {
       lexAssert(`
 @include('view.name', {
   'foo': ['hello )))', '(( world'],
@@ -151,7 +151,7 @@ Hello World
       ]);
     });
 
-    it('sample-3', () => {
+    it('sample-3 (\'{{ }}\' and \'{!! !!}\')', () => {
       lexAssert(`
 <div>
   Username: {{ user.name }}
@@ -193,7 +193,7 @@ Hello World
       ]);
     });
 
-    it('sample-4', () => {
+    it('sample-4 (escape with \'@\')', () => {
       lexAssert(`
 <div>
   Username: @{{ user.name }}
@@ -205,6 +205,34 @@ Hello World
           type: 'text',
           value:
             '<div>\n  Username: {{ user.name }}\n  Status: {{ user.status }}\n  Badge: {!! user.badge !!}\n</div>',
+        },
+      ]);
+    });
+
+    it('sample-5 (verbatim and js)', () => {
+      lexAssert(`
+@verbatim
+Hello World
+@endverbatim
+
+@js
+for (let i = 0; i < 10; ++i) {
+  print(i);
+}
+@endjs
+`.trim(), [
+        {
+          type: 'text',
+          value: '\nHello World\n',
+        },
+        {
+          type: 'text',
+          value: '\n\n',
+        },
+        {
+          type: 'function',
+          name: 'js',
+          args: ['\nfor (let i = 0; i < 10; ++i) {\n  print(i);\n}\n'],
         },
       ]);
     });

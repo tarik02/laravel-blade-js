@@ -10,6 +10,8 @@ export class Lexer {
   private readonly tokens: IterableIterator<FullToken>;
   private current: FullToken | undefined;
 
+  private readonly openRawFunctions: string[] = ['js', 'verbatim'];
+
   public constructor(input: CharStream) {
     this.input = input;
     this.tokens = this.generator();
@@ -62,6 +64,7 @@ export class Lexer {
     };
 
     let isRaw = false;
+    let rawFunction: string | undefined;
 
     while (!input.eof()) {
       const c = input.peek();
@@ -170,8 +173,22 @@ export class Lexer {
         }
 
         if (isRaw) {
-          if (name === 'endverbatim') {
-            yield* flush();
+          if (rawFunction && name === 'end' + rawFunction) {
+            isRaw = false;
+
+            if (rawFunction === 'verbatim') {
+              yield* flush();
+            } else {
+              yield {
+                ...tokenPosition(input.position),
+                type: 'function',
+                name: rawFunction,
+                args: [text],
+              };
+              text = '';
+            }
+
+            rawFunction = undefined;
             continue;
           }
 
@@ -180,9 +197,10 @@ export class Lexer {
           continue;
         }
 
-        if (name === 'verbatim') {
+        if (this.openRawFunctions.indexOf(name) !== -1) {
           yield* flush();
           isRaw = true;
+          rawFunction = name;
           continue;
         }
 
