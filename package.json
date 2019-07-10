@@ -1,27 +1,43 @@
 {
-	"name": "laravel-blade-js",
-	"version": "1.0.8",
-	"description": "Laravel's blade templating engine for JavaScript",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": [
-		"template",
-		"html",
-		"laravel"
-	],
-	"author": "Tarik02",
-	"license": "ISC",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Tarik02/laravel-blade-js"
-	},
-	"dependencies": {
-		"escape-html": "^1.0.3",
-		"extend": "^3.0.0",
-		"js-string-escape": "^1.0.1",
-		"md5": "^2.2.1",
-		"mkdirp": "^0.5.1"
-	}
+  "name": "laravel-blade-js",
+  "version": "1.0.8",
+  "license": "MIT",
+  "author": {
+    "name": "Tarik02",
+    "url": "https://github.com/Tarik02"
+  },
+  "description": "Laravel's blade templating engine for JavaScript and TypeScript.",
+  "keywords": [
+    "template",
+    "html",
+    "laravel"
+  ],
+  "main": "out/index.js",
+  "types": "out/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint -c ./tslint.json 'src/**/*.ts' 'test/**/*.ts'",
+    "test": "mocha -r ts-node/register test/*.ts",
+    "prepublish": "yarn run build && yarn run lint && yarn run test"
+  },
+  "homepage": "https://github.com/Tarik02/laravel-blade-js#readme",
+  "bugs": {
+    "url": "https://github.com/Tarik02/laravel-blade-js#readme"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tarik02/laravel-blade-js.git"
+  },
+  "dependencies": {
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  }
 }
