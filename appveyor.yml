@@ -11,16 +11,16 @@ install:
 
 matrix:
   fast_finish: true
-build: off
+build: false
 shallow_clone: true
 
 test_script:
-  - node --version
-  - yarn --version
+- node --version
+- yarn --version
 
-  - yarn lint
-  - yarn build:prod
-  - yarn test
+- yarn lint
+- yarn build:prod
+- yarn test
 
 cache:
-  - '%APPDATA%\npm-cache'
+- '%APPDATA%\npm-cache'
