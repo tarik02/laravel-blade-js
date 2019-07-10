@@ -150,5 +150,63 @@ Hello World
         },
       ]);
     });
+
+    it('sample-3', () => {
+      lexAssert(`
+<div>
+  Username: {{ user.name }}
+  Status: {{ user.status }}
+  Badge: {!! user.badge !!}
+</div>
+`.trim(), [
+        {
+          type: 'text',
+          value: '<div>\n  Username: ',
+        },
+        {
+          type: 'data',
+          escaped: true,
+          value: ' user.name ',
+        },
+        {
+          type: 'text',
+          value: '\n  Status: ',
+        },
+        {
+          type: 'data',
+          escaped: true,
+          value: ' user.status ',
+        },
+        {
+          type: 'text',
+          value: '\n  Badge: ',
+        },
+        {
+          type: 'data',
+          escaped: false,
+          value: ' user.badge ',
+        },
+        {
+          type: 'text',
+          value: '\n</div>',
+        },
+      ]);
+    });
+
+    it('sample-4', () => {
+      lexAssert(`
+<div>
+  Username: @{{ user.name }}
+  Status: @{{ user.status }}
+  Badge: @{!! user.badge !!}
+</div>
+`.trim(), [
+        {
+          type: 'text',
+          value:
+            '<div>\n  Username: {{ user.name }}\n  Status: {{ user.status }}\n  Badge: {!! user.badge !!}\n</div>',
+        },
+      ]);
+    });
   });
 });

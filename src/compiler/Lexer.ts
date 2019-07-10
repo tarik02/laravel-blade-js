@@ -74,34 +74,76 @@ export class Lexer {
 
       switch (c) {
       case '{': {
-        if (
-          input.peek(1) === '{' &&
-          input.peek(2) === '-' &&
-          input.peek(3) === '-'
-        ) {
-          const position = input.position;
-          input.skip(4);
+        if (input.sub(2, 1) === '!!') {
+          // unescaped data
 
-          let comment = '';
+          const position = input.position;
+          input.skip(3);
+
+          let data = '';
           while (!input.eof()) {
-            if (
-              input.peek(0) === '-' &&
-              input.peek(1) === '-' &&
-              input.peek(2) === '}' &&
-              input.peek(3) === '}'
-            ) {
-              input.skip(4);
+            if (input.sub(3) === '!!}') {
+              input.skip(3);
               break;
             } else {
-              comment += input.next();
+              data += input.next();
             }
           }
 
           yield* flush(() => ({
             ...tokenPosition(),
-            type: 'comment',
-            value: comment,
+            type: 'data',
+            escaped: false,
+            value: data,
           }), position);
+
+          continue;
+        } else if (input.peek(1) === '{') {
+          if (input.sub(2, 2) === '--') {
+            // comment
+
+            const position = input.position;
+            input.skip(4);
+
+            let comment = '';
+            while (!input.eof()) {
+              if (input.sub(4) === '--}}') {
+                input.skip(4);
+                break;
+              } else {
+                comment += input.next();
+              }
+            }
+
+            yield* flush(() => ({
+              ...tokenPosition(),
+              type: 'comment',
+              value: comment,
+            }), position);
+          } else {
+            // escaped data
+
+            const position = input.position;
+            input.skip(2);
+
+            let data = '';
+            while (!input.eof()) {
+              if (input.sub(2) === '}}') {
+                input.skip(2);
+                break;
+              } else {
+                data += input.next();
+              }
+            }
+
+            yield* flush(() => ({
+              ...tokenPosition(),
+              type: 'data',
+              escaped: true,
+              value: data,
+            }), position);
+          }
+
           continue;
         }
         break;
@@ -116,7 +158,6 @@ export class Lexer {
             continue;
           }
 
-          text += '@';
           while (!input.eof() && !Char.isWhitespace(input.peek())) {
             text += input.next();
           }

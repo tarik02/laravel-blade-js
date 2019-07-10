@@ -27,6 +27,10 @@ export class CharStream {
     return this.input[this.offset + offset];
   }
 
+  public sub(length: number, offset: number = 0): string {
+    return this.input.substring(this.offset + offset, this.offset + offset + length);
+  }
+
   public next(throwEof: boolean = true): string {
     if (this.offset >= this.input.length) {
       if (throwEof) {
