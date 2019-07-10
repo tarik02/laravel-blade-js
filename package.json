@@ -20,7 +20,8 @@
     "lint": "tslint -c ./tslint.json 'src/**/*.ts' 'test/**/*.ts'",
     "lint:fix": "yarn lint --fix",
     "test": "mocha -r ts-node/register test/**/*.ts",
-    "prepublish": "yarn run build:prod && yarn run lint && yarn run test"
+
+    "prepublishOnly": "yarn build:prod && yarn lint && yarn test"
   },
   "homepage": "https://github.com/Tarik02/laravel-blade-js#readme",
   "bugs": {

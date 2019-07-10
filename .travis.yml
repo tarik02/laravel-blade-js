@@ -6,6 +6,9 @@ install:
   - yarn install
 
 script:
+  - node --version
+  - yarn --version
+
   - yarn lint
   - yarn build
   - yarn test
