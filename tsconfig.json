@@ -4,8 +4,9 @@
     "target": "es5",
     "module": "commonjs",
     "lib": [
-      "dom",
-      "es6"
+      "es6",
+      "es7",
+      "dom"
     ],
     "allowJs": false,
     "sourceMap": true,
@@ -15,7 +16,6 @@
     "importHelpers": true,
     "downlevelIteration": true,
     "isolatedModules": true,
-    "declaration": true,
 
     "strict": true,
     "noImplicitAny": true,
