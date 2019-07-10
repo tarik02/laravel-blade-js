@@ -117,6 +117,13 @@ camelcase@^5.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
+chai-exclude@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/chai-exclude/-/chai-exclude-2.0.1.tgz#43e474a2a055d5efa414efcae30a91761148809c"
+  integrity sha512-9cZ0ZzlGRwZvNiKUPTbx4E1anQ4aTqtKOX96+cb4XrNa+8B5KNZg3d43clYNawgXgBcQAenXeX5fbeY7+TdkrA==
+  dependencies:
+    fclone "^1.0.11"
+
 chai@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/chai/-/chai-4.2.0.tgz#760aa72cf20e3795e84b12877ce0e83737aa29e5"
@@ -286,6 +293,11 @@ execa@^1.0.0:
     p-finally "^1.0.0"
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
+
+fclone@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/fclone/-/fclone-1.0.11.tgz#10e85da38bfea7fc599341c296ee1d77266ee640"
+  integrity sha1-EOhdo4v+p/xZk0HClu4ddyZu5kA=
 
 file-uri-to-path@1.0.0:
   version "1.0.0"

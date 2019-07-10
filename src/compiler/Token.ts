@@ -1,3 +1,5 @@
+import { Position } from '../types/Position';
+
 export type BaseToken = {
   readonly type: string;
 };
@@ -28,3 +30,10 @@ export type Token =
   | TokenFunction
   | TokenEof
   ;
+
+export type TokenPosition = {
+  readonly start: Position;
+  readonly end: Position;
+};
+
+export type FullToken = Token & TokenPosition;

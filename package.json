@@ -20,7 +20,6 @@
     "lint": "tslint -c ./tslint.json 'src/**/*.ts' 'test/**/*.ts'",
     "lint:fix": "yarn lint --fix",
     "test": "mocha -r ts-node/register test/**/*.ts",
-
     "prepublishOnly": "yarn build:prod && yarn lint && yarn test"
   },
   "homepage": "https://github.com/Tarik02/laravel-blade-js#readme",
@@ -39,6 +38,7 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.6.2",
     "chai": "^4.2.0",
+    "chai-exclude": "^2.0.1",
     "mocha": "^6.1.4",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",

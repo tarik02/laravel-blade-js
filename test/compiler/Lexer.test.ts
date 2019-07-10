@@ -1,7 +1,10 @@
 /* tslint:disable:no-unused-expression */
 
-import { expect } from 'chai';
+import { expect, use } from 'chai';
+import chaiExclude from 'chai-exclude';
 import 'mocha';
+
+use(chaiExclude);
 
 import { CharStream } from '../../src/compiler/CharStream';
 import { Lexer } from '../../src/compiler/Lexer';
@@ -20,8 +23,10 @@ describe('compiler/Lexer', () => {
     }
     return result;
   };
-  const lexAssert = (text: string, tokens: Token[]) => {
-    expect(lex(text)).deep.eq(tokens);
+  const lexAssert = (text: string, expectedTokens: Token[]) => {
+    const actualTokens = lex(text);
+
+    expect(actualTokens).excludingEvery(['start', 'end']).deep.eq(expectedTokens);
   };
 
   describe('peek', () => {

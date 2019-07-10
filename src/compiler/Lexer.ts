@@ -1,44 +1,55 @@
-import { Char } from '../string/Char';
-import { CharStream } from './CharStream';
-import { Token } from './Token';
 import { inspect } from 'util';
+import { Char } from '../string/Char';
+import { Position } from '../types/Position';
+import { CharStream } from './CharStream';
+import { FullToken, TokenPosition } from './Token';
 
 export class Lexer {
   private readonly input: CharStream;
-  private readonly tokens: IterableIterator<Token>;
-  private current: Token | undefined;
+  private readonly tokens: IterableIterator<FullToken>;
+  private current: FullToken | undefined;
 
   public constructor(input: CharStream) {
     this.input = input;
     this.tokens = this.generator();
   }
 
-  public peek(): Token {
+  public peek(): FullToken {
     if (this.current === undefined) {
       this.current = this.tokens.next().value;
     }
     return this.current;
   }
 
-  public next(): Token {
+  public next(): FullToken {
     this.current = undefined;
     return this.peek();
   }
 
-  private *generator(): IterableIterator<Token> {
+  private *generator(): IterableIterator<FullToken> {
     const input = this.input;
     let text = '';
 
-    const flush = function *(token?: Token): IterableIterator<Token> {
+    let prevPosition = input.position;
+
+    const tokenPosition = (end: Position = input.position): TokenPosition => {
+      const start = prevPosition;
+      prevPosition = end;
+
+      return { start, end };
+    };
+
+    const flush = function *(token?: () => FullToken, begin?: Position): IterableIterator<FullToken> {
       if (text !== '') {
         yield {
+          ...tokenPosition(begin),
           type: 'text',
           value: text,
         };
         text = '';
       }
       if (token !== undefined) {
-        yield token;
+        yield token();
       }
     };
 
@@ -54,12 +65,13 @@ export class Lexer {
       }
 
       switch (c) {
-      case '{':
+      case '{': {
         if (
           input.peek(1) === '{' &&
           input.peek(2) === '-' &&
           input.peek(3) === '-'
         ) {
+          const position = input.position;
           input.skip(4);
 
           let comment = '';
@@ -77,14 +89,17 @@ export class Lexer {
             }
           }
 
-          yield* flush({
+          yield* flush(() => ({
+            ...tokenPosition(),
             type: 'comment',
             value: comment,
-          });
+          }), position);
           continue;
         }
         break;
-      case '@':
+      }
+      case '@': {
+        const position = input.position;
         input.skip();
 
         if (!Char.isLetter(input.peek())) {
@@ -196,19 +211,22 @@ export class Lexer {
             args.push(arg);
           }
 
-          yield* flush({
+          yield* flush(() => ({
+            ...tokenPosition(),
             type: 'function',
             name,
             args,
-          });
+          }), position);
         } else {
-          yield* flush({
+          yield* flush(() => ({
+            ...tokenPosition(),
             type: 'function',
             name,
-          });
+          }), position);
         }
 
         continue;
+      }
       }
 
       input.next();
@@ -217,7 +235,7 @@ export class Lexer {
 
     yield* flush();
 
-    const eof: Token = { type: 'eof' };
+    const eof: FullToken = { ...tokenPosition(), type: 'eof' };
     while (true) {
       yield eof;
     }
