@@ -30,24 +30,24 @@ describe('types/Position', () => {
   });
 
   describe('column', () => {
-    it('should be starting from 0', () => {
+    it('should be starting from 1', () => {
       const pos = new Position(new Source(''), 0);
 
-      expect(pos.column).eq(0);
+      expect(pos.column).eq(1);
     });
 
     it('should treat \\n as symbol on previous line', () => {
       const pos1 = new Position(new Source('Hello\nWorld\n'), 5);
       const pos2 = new Position(new Source('Hello\nWorld\n'), 11);
 
-      expect(pos1.column).eq(5);
-      expect(pos2.column).eq(5);
+      expect(pos1.column).eq(6);
+      expect(pos2.column).eq(6);
     });
 
     it('should return column of the position', () => {
       const pos = new Position(new Source('Hello\nWorld\n'), 9);
 
-      expect(pos.column).eq(3);
+      expect(pos.column).eq(4);
     });
   });
 
@@ -58,7 +58,7 @@ describe('types/Position', () => {
 
       expect(pos2.offset).eq(4);
       expect(pos2.line).eq(1);
-      expect(pos2.column).eq(4);
+      expect(pos2.column).eq(5);
     });
 
     it('should accept positive values', () => {
@@ -67,7 +67,7 @@ describe('types/Position', () => {
 
       expect(pos2.offset).eq(8);
       expect(pos2.line).eq(2);
-      expect(pos2.column).eq(2);
+      expect(pos2.column).eq(3);
     });
 
     it('should return to the same position if using values with sum 0', () => {
@@ -130,7 +130,7 @@ describe('types/Position', () => {
       const source = new Source('Hello World');
       const pos = new Position(source, 3);
 
-      expect(pos.toString()).eq('1:3');
+      expect(pos.toString()).eq('1:4');
     });
   });
 });

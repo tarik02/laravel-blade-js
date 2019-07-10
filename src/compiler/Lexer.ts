@@ -2,6 +2,7 @@ import { inspect } from 'util';
 import { Char } from '../string/Char';
 import { Position } from '../types/Position';
 import { CharStream } from './CharStream';
+import { LexerError } from './LexerError';
 import { FullToken, TokenPosition } from './Token';
 
 export class Lexer {
@@ -31,6 +32,13 @@ export class Lexer {
     let text = '';
 
     let prevPosition = input.position;
+
+    const error = (message: string, position: Position = input.position) => {
+      throw new LexerError(input.source, {
+        start: position,
+        end: position,
+      }, message);
+    };
 
     const tokenPosition = (end: Position = input.position): TokenPosition => {
       const start = prevPosition;
@@ -197,8 +205,7 @@ export class Lexer {
 
               const expected = braces.pop();
               if (expected !== ch) {
-                // TODO: Specific error class
-                throw new Error(`expected ${inspect(expected)}, got ${inspect(ch)}`);
+                error(`expected ${inspect(expected)}, got ${inspect(ch)}`);
               }
               break;
             default:

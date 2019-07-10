@@ -66,13 +66,13 @@ export class Position {
 
   private cacheLineAndColumn() {
     this.cachedLine = 1;
-    this.cachedColumn = 0;
+    this.cachedColumn = 1;
 
     const text = this.source.text;
     for (let i: number = 0; i < this.offset; ++i) {
       if (text[i] === '\n') {
         ++this.cachedLine;
-        this.cachedColumn = 0;
+        this.cachedColumn = 1;
       } else {
         ++this.cachedColumn;
       }

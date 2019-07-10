@@ -1,13 +1,14 @@
 import { Position } from '../types/Position';
 import { Source } from '../types/Source';
+import { LexerError } from './LexerError';
 
 export class CharStream {
-  private readonly source: Source;
+  public readonly source: Source;
   private readonly input: string;
 
   private offset: number = 0;
   private line: number = 1;
-  private column: number = 0;
+  private column: number = 1;
   private cachedPosition: Position | undefined;
 
   public get position(): Position {
@@ -29,8 +30,10 @@ export class CharStream {
   public next(throwEof: boolean = true): string {
     if (this.offset >= this.input.length) {
       if (throwEof) {
-        // TODO: Special error type
-        throw new Error('EOF');
+        throw new LexerError(this.source, {
+          start: this.position,
+          end: this.position,
+        }, 'unexpected end of file');
       }
 
       return '';
@@ -40,7 +43,7 @@ export class CharStream {
     const ch = this.input[this.offset++];
     if (ch === '\n') {
       ++this.line;
-      this.column = 0;
+      this.column = 1;
     } else {
       ++this.column;
     }
@@ -53,7 +56,7 @@ export class CharStream {
     while (--count >= 0) {
       if (this.input[this.offset++] === '\n') {
         ++this.line;
-        this.column = 0;
+        this.column = 1;
       } else {
         ++this.column;
       }

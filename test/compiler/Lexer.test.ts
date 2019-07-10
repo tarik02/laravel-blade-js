@@ -1,34 +1,12 @@
 /* tslint:disable:no-unused-expression */
 
-import { expect, use } from 'chai';
-import chaiExclude from 'chai-exclude';
+import { expect } from 'chai';
 import 'mocha';
+import { createLexer, lexAssert } from '../util.test';
 
-use(chaiExclude);
-
-import { CharStream } from '../../src/compiler/CharStream';
-import { Lexer } from '../../src/compiler/Lexer';
 import { Token } from '../../src/compiler/Token';
-import { Source } from '../../src/types/Source';
 
 describe('compiler/Lexer', () => {
-  const createLexer = (text: string) => new Lexer(new CharStream(new Source(text)));
-  const lex = (text: string): Token[] => {
-    const lexer = createLexer(text);
-    let tok: Token;
-
-    const result = [];
-    while ((tok = lexer.next()).type !== 'eof') {
-      result.push(tok);
-    }
-    return result;
-  };
-  const lexAssert = (text: string, expectedTokens: Token[]) => {
-    const actualTokens = lex(text);
-
-    expect(actualTokens).excludingEvery(['start', 'end']).deep.eq(expectedTokens);
-  };
-
   describe('peek', () => {
     it('should return eof token when source is empty', () => {
       const lexer = createLexer('');
