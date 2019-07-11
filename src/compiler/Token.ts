@@ -4,13 +4,13 @@ export type BaseToken = {
   readonly type: string;
 };
 
-export type TokenText = BaseToken & {
-  readonly type: 'text';
+export type TokenComment = BaseToken & {
+  readonly type: 'comment';
   readonly value: string;
 };
 
-export type TokenComment = BaseToken & {
-  readonly type: 'comment';
+export type TokenText = BaseToken & {
+  readonly type: 'text';
   readonly value: string;
 };
 
@@ -31,8 +31,8 @@ export type TokenEof = BaseToken & {
 };
 
 export type Token =
-  | TokenText
   | TokenComment
+  | TokenText
   | TokenData
   | TokenFunction
   | TokenEof

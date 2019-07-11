@@ -1,14 +1,20 @@
 import { inspect } from 'util';
 import { Char } from '../string/Char';
 import { Position } from '../types/Position';
+import { Source } from '../types/Source';
 import { CharStream } from './CharStream';
 import { LexerError } from './LexerError';
 import { FullToken, TokenPosition } from './Token';
 
 export interface Lexer {
+  readonly source: Source;
+  readonly position: Position;
+
   peek(): FullToken;
 
   next(): FullToken;
+
+  eof(): boolean;
 }
 
 export interface LexerConfig {
@@ -31,7 +37,7 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
 
   let prevPosition = input.position;
 
-  const error = (message: string, position: Position = input.position) => {
+  const error = (message: string, position: Position = input.position): never => {
     throw new LexerError(input.source, {
       start: position,
       end: position,
@@ -258,7 +264,10 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
 
               const expected = braces.pop();
               if (expected !== ch) {
-                error(`expected ${inspect(expected)}, got ${inspect(ch)}`);
+                error(
+                  `expected ${inspect(expected)}, got ${inspect(ch)}`,
+                  input.position.relative(-1),
+                );
               }
               break;
             default:
@@ -313,12 +322,23 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
   };
 
   const next = (): FullToken => {
+    const tok = peek();
     current = undefined;
-    return peek();
+    return tok;
   };
 
   return {
+    source: input.source,
+    get position(): Position {
+      if (current !== undefined) {
+        return current.start;
+      } else {
+        return input.position;
+      }
+    },
+
     peek,
     next,
+    eof: () => input.eof(),
   };
 };

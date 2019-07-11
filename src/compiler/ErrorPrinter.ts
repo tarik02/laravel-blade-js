@@ -1,5 +1,6 @@
 import { LexerError } from './LexerError';
 
+// TODO: Reduce boilerplate
 export const ErrorPrinter = {
   prettyLexerError: (error: LexerError): string => {
     const { position: { start, end }, message, source } = error;
@@ -15,7 +16,7 @@ export const ErrorPrinter = {
         result += (`${i}. `.padEnd(pad)) + line + '\n';
 
         if (i === start.line) {
-          result += ' '.repeat(pad + start.column - 2);
+          result += ' '.repeat(pad + start.column - 1);
           result += '^';
           result += '\n';
         }

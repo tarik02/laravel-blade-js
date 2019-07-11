@@ -51,6 +51,15 @@ Hello World
         expect(tok.args).deep.eq([`'a'`, `'b'`]);
       }
     });
+
+    it('should return first token even if peek was called before', () => {
+      const lexer = createLexerFromText(`
+@for(let i = 0; i < 10; ++i)
+@endfor
+`.trim());
+
+      expect(lexer.peek()).deep.eq(lexer.next());
+    });
   });
 
   describe('samples', () => {
