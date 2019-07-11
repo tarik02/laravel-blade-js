@@ -5,67 +5,61 @@ import { CharStream } from './CharStream';
 import { LexerError } from './LexerError';
 import { FullToken, TokenPosition } from './Token';
 
-export class Lexer {
-  private readonly input: CharStream;
-  private readonly tokens: IterableIterator<FullToken>;
-  private current: FullToken | undefined;
+export interface Lexer {
+  peek(): FullToken;
 
-  private readonly openRawFunctions: string[] = ['js', 'verbatim'];
+  next(): FullToken;
+}
 
-  public constructor(input: CharStream) {
-    this.input = input;
-    this.tokens = this.generator();
-  }
+export interface LexerConfig {
+  readonly rawFunctions: ReadonlyArray<string>;
+}
 
-  public peek(): FullToken {
-    if (this.current === undefined) {
-      this.current = this.tokens.next().value;
+export const DEFAULT_LEXER_CONFIG: LexerConfig = {
+  rawFunctions: ['js', 'verbatim'],
+};
+
+export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig>): Lexer => {
+  const config: LexerConfig = {
+    ...DEFAULT_LEXER_CONFIG,
+    ...lexerConfig,
+  };
+
+  let text = '';
+  let isRaw = false;
+  let rawFunction: string | undefined;
+
+  let prevPosition = input.position;
+
+  const error = (message: string, position: Position = input.position) => {
+    throw new LexerError(input.source, {
+      start: position,
+      end: position,
+    }, message);
+  };
+
+  const tokenPosition = (end: Position = input.position): TokenPosition => {
+    const start = prevPosition;
+    prevPosition = end;
+
+    return { start, end };
+  };
+
+  const flush = function *(token?: () => FullToken, begin?: Position): IterableIterator<FullToken> {
+    if (text !== '') {
+      yield {
+        ...tokenPosition(begin),
+        type: 'text',
+        value: text,
+      };
+      text = '';
     }
-    return this.current;
-  }
+    if (token !== undefined) {
+      yield token();
+    }
+  };
 
-  public next(): FullToken {
-    this.current = undefined;
-    return this.peek();
-  }
-
-  private *generator(): IterableIterator<FullToken> {
-    const input = this.input;
-    let text = '';
-
-    let prevPosition = input.position;
-
-    const error = (message: string, position: Position = input.position) => {
-      throw new LexerError(input.source, {
-        start: position,
-        end: position,
-      }, message);
-    };
-
-    const tokenPosition = (end: Position = input.position): TokenPosition => {
-      const start = prevPosition;
-      prevPosition = end;
-
-      return { start, end };
-    };
-
-    const flush = function *(token?: () => FullToken, begin?: Position): IterableIterator<FullToken> {
-      if (text !== '') {
-        yield {
-          ...tokenPosition(begin),
-          type: 'text',
-          value: text,
-        };
-        text = '';
-      }
-      if (token !== undefined) {
-        yield token();
-      }
-    };
-
-    let isRaw = false;
-    let rawFunction: string | undefined;
-
+  const generator = function *(): IterableIterator<FullToken> {
     while (!input.eof()) {
       const c = input.peek();
 
@@ -197,7 +191,7 @@ export class Lexer {
           continue;
         }
 
-        if (this.openRawFunctions.indexOf(name) !== -1) {
+        if (config.rawFunctions.indexOf(name) !== -1) {
           yield* flush();
           isRaw = true;
           rawFunction = name;
@@ -305,5 +299,26 @@ export class Lexer {
     while (true) {
       yield eof;
     }
-  }
-}
+  };
+
+  const tokens = generator();
+
+  let current: FullToken | undefined;
+
+  const peek = (): FullToken => {
+    if (current === undefined) {
+      current = tokens.next().value;
+    }
+    return current;
+  };
+
+  const next = (): FullToken => {
+    current = undefined;
+    return peek();
+  };
+
+  return {
+    peek,
+    next,
+  };
+};

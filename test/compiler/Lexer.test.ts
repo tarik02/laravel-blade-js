@@ -2,20 +2,20 @@
 
 import { expect } from 'chai';
 import 'mocha';
-import { createLexer, lexAssert } from '../util.test';
+import { createLexerFromText, lexAssert } from '../util.test';
 
 import { Token } from '../../src/compiler/Token';
 
 describe('compiler/Lexer', () => {
   describe('peek', () => {
     it('should return eof token when source is empty', () => {
-      const lexer = createLexer('');
+      const lexer = createLexerFromText('');
 
       expect(lexer.peek().type).eq('eof');
     });
 
     it('should return next token without moving', () => {
-      const lexer = createLexer('Hello World');
+      const lexer = createLexerFromText('Hello World');
 
       expect(lexer.peek() === lexer.peek()).true;
     });
@@ -23,7 +23,7 @@ describe('compiler/Lexer', () => {
 
   describe('next', () => {
     it('should return eof token when source is empty', () => {
-      const lexer = createLexer('');
+      const lexer = createLexerFromText('');
 
       for (let i = 0; i < 100; ++i) {
         expect(lexer.peek().type).eq('eof');
@@ -31,7 +31,7 @@ describe('compiler/Lexer', () => {
     });
 
     it('should move thru tokens', () => {
-      const lexer = createLexer(`
+      const lexer = createLexerFromText(`
 Hello World
 @section('a', 'b')
 `.trim());

@@ -4,15 +4,17 @@ import chaiExclude from 'chai-exclude';
 use(chaiExclude);
 
 import { CharStream } from '../src/compiler/CharStream';
-import { Lexer } from '../src/compiler/Lexer';
+import { createLexer, LexerConfig } from '../src/compiler/Lexer';
 import { LexerError } from '../src/compiler/LexerError';
 import { Token } from '../src/compiler/Token';
 import { Source } from '../src/types/Source';
 
-export const createLexer = (text: string) => new Lexer(new CharStream(new Source(text)));
+export const createLexerFromText =
+  (text: string, config?: Partial<LexerConfig>) => createLexer(new CharStream(new Source(text)), config)
+;
 
 export const lex = (text: string): Token[] => {
-  const lexer = createLexer(text);
+  const lexer = createLexerFromText(text);
   let tok: Token;
 
   const result = [];
