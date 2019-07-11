@@ -34,6 +34,7 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
   let text = '';
   let isRaw = false;
   let rawFunction: string | undefined;
+  let rawArgs: string[] | undefined;
 
   let prevPosition = input.position;
 
@@ -176,19 +177,31 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
           if (rawFunction && name === 'end' + rawFunction) {
             isRaw = false;
 
+            // verbatim is always treated as text
             if (rawFunction === 'verbatim') {
               yield* flush();
             } else {
-              yield {
-                ...tokenPosition(input.position),
-                type: 'function',
-                name: rawFunction,
-                args: [text],
-              };
+              if (rawArgs !== undefined) {
+                yield {
+                  ...tokenPosition(input.position),
+                  type: 'raw-function',
+                  name: rawFunction,
+                  args: rawArgs,
+                  content: text,
+                };
+              } else {
+                yield {
+                  ...tokenPosition(input.position),
+                  type: 'raw-function',
+                  name: rawFunction,
+                  content: text,
+                };
+              }
               text = '';
             }
 
             rawFunction = undefined;
+            rawArgs = undefined;
             continue;
           }
 
@@ -197,7 +210,8 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
           continue;
         }
 
-        if (config.rawFunctions.indexOf(name) !== -1) {
+        // @verbatim may not have arguments
+        if (name === 'verbatim' && config.rawFunctions.indexOf(name) !== -1) {
           yield* flush();
           isRaw = true;
           rawFunction = name;
@@ -280,6 +294,14 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
             args.push(arg);
           }
 
+          if (config.rawFunctions.indexOf(name) !== -1) {
+            yield* flush();
+            isRaw = true;
+            rawFunction = name;
+            rawArgs = args;
+            continue;
+          }
+
           yield* flush(() => ({
             ...tokenPosition(),
             type: 'function',
@@ -287,6 +309,14 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
             args,
           }), position);
         } else {
+          if (config.rawFunctions.indexOf(name) !== -1) {
+            yield* flush();
+            isRaw = true;
+            rawFunction = name;
+            rawArgs = undefined;
+            continue;
+          }
+
           yield* flush(() => ({
             ...tokenPosition(),
             type: 'function',

@@ -229,6 +229,15 @@ for (let i = 0; i < 10; ++i) {
   print(i);
 }
 @endjs
+
+@markdown('default')
+
+Profile info:
+- Name: Bill
+- Number: *+1234567890*
+- Email: example@example.com
+
+@endmarkdown
 `.trim(), [
         {
           type: 'text',
@@ -239,11 +248,23 @@ for (let i = 0; i < 10; ++i) {
           value: '\n\n',
         },
         {
-          type: 'function',
+          type: 'raw-function',
           name: 'js',
-          args: ['\nfor (let i = 0; i < 10; ++i) {\n  print(i);\n}\n'],
+          content: '\nfor (let i = 0; i < 10; ++i) {\n  print(i);\n}\n',
         },
-      ]);
+        {
+          type: 'text',
+          value: '\n\n',
+        },
+        {
+          type: 'raw-function',
+          name: 'markdown',
+          args: [`'default'`],
+          content: '\n\nProfile info:\n- Name: Bill\n- Number: *+1234567890*\n- Email: example@example.com\n\n',
+        },
+      ], {
+        rawFunctions: ['verbatim', 'js', 'markdown'],
+      });
     });
   });
 });

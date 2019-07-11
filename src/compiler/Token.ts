@@ -26,6 +26,13 @@ export type TokenFunction = BaseToken & {
   readonly args?: ReadonlyArray<string>;
 };
 
+export type TokenRawFunction = BaseToken & {
+  readonly type: 'raw-function';
+  readonly name: string;
+  readonly args?: ReadonlyArray<string>;
+  readonly content: string;
+};
+
 export type TokenEof = BaseToken & {
   readonly type: 'eof';
 };
@@ -35,6 +42,7 @@ export type Token =
   | TokenText
   | TokenData
   | TokenFunction
+  | TokenRawFunction
   | TokenEof
   ;
 
