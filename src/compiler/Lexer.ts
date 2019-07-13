@@ -1,4 +1,3 @@
-import { inspect } from 'util';
 import { Char } from '../string/Char';
 import { Position } from '../types/Position';
 import { Source } from '../types/Source';
@@ -22,7 +21,7 @@ export interface LexerConfig {
 }
 
 export const DEFAULT_LEXER_CONFIG: LexerConfig = {
-  rawFunctions: ['js', 'verbatim'],
+  rawFunctions: ['js'],
 };
 
 export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig>): Lexer => {
@@ -211,7 +210,7 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
         }
 
         // @verbatim may not have arguments
-        if (name === 'verbatim' && config.rawFunctions.indexOf(name) !== -1) {
+        if (name === 'verbatim') {
           yield* flush();
           isRaw = true;
           rawFunction = name;
@@ -279,7 +278,7 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
               const expected = braces.pop();
               if (expected !== ch) {
                 error(
-                  `expected ${inspect(expected)}, got ${inspect(ch)}`,
+                  `expected ${JSON.stringify(expected)}, got ${JSON.stringify(ch)}`,
                   input.position.relative(-1),
                 );
               }

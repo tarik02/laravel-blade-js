@@ -1,4 +1,4 @@
 import { AbstractError } from './AbstractError';
 
-export class LexerError extends AbstractError {
+export class CompilerError extends AbstractError {
 }

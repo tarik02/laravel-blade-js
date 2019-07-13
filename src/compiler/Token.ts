@@ -1,4 +1,4 @@
-import { Position } from '../types/Position';
+import { ScopedPosition } from './ScopedPosition';
 
 export type BaseToken = {
   readonly type: string;
@@ -46,9 +46,4 @@ export type Token =
   | TokenEof
   ;
 
-export type TokenPosition = {
-  readonly start: Position;
-  readonly end: Position;
-};
-
-export type FullToken = Token & TokenPosition;
+export type FullToken = ScopedPosition & Token;
