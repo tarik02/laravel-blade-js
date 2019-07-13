@@ -5,10 +5,10 @@ import {
   NodeContainer,
   NodeData,
   NodeFunction,
-  NodePosition,
   NodeRawFunction, NodeSequence,
-  NodeText
+  NodeText,
 } from './Node';
+import { ScopedPosition } from './ScopedPosition';
 
 export interface FunctionBuilder {
   append(arg: string): void;
@@ -22,7 +22,7 @@ export interface FunctionBuilder {
   compileSequence(node: NodeSequence): void;
   compileNode(node: Node): void;
 
-  error(message: string, node: Node, position?: Partial<NodePosition>): never;
+  error(message: string, node: Node, position?: Partial<ScopedPosition>): never;
 
   expectedArgs(node: Node & BaseFunction, expected: number): never | void;
   // tslint:disable-next-line:unified-signatures

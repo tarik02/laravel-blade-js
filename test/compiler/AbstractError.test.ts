@@ -1,13 +1,12 @@
 import { expect } from 'chai';
 import 'mocha';
-import { ErrorPrinter } from '../../src/compiler/ErrorPrinter';
 
 import { lexError } from '../util.test';
 
-describe('compiler/ErrorPrinter', () => {
-  describe('prettyLexerError', () => {
+describe('compiler/AbstractError', () => {
+  describe('prettyPrint', () => {
     it('error-1', () => {
-      expect(ErrorPrinter.prettyLexerError(lexError(`
+      expect(lexError(`
 <html>
     <body>
         @section('sidebar', {))
@@ -15,8 +14,8 @@ describe('compiler/ErrorPrinter', () => {
         @show
     </body>
 </html>
-`.trim()))).eq(`
-unknown:3:30: expected '}', got ')'
+`.trim()).prettyPrint(false)).eq(`
+unknown:3:30: expected "}", got ")"
 2.     <body>
 3.         @section('sidebar', {))
                                 ^

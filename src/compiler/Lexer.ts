@@ -3,7 +3,8 @@ import { Position } from '../types/Position';
 import { Source } from '../types/Source';
 import { CharStream } from './CharStream';
 import { LexerError } from './LexerError';
-import { FullToken, TokenPosition } from './Token';
+import { ScopedPosition } from './ScopedPosition';
+import { FullToken } from './Token';
 
 export interface Lexer {
   readonly source: Source;
@@ -44,7 +45,7 @@ export const createLexer = (input: CharStream, lexerConfig?: Partial<LexerConfig
     }, message);
   };
 
-  const tokenPosition = (end: Position = input.position): TokenPosition => {
+  const tokenPosition = (end: Position = input.position): ScopedPosition => {
     const start = prevPosition;
     prevPosition = end;
 

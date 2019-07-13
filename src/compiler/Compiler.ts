@@ -11,7 +11,7 @@ import {
   NodeComment,
   NodeContainer,
   NodeData,
-  NodeFunction, NodePosition,
+  NodeFunction,
   NodeRawFunction,
   NodeSequence,
   NodeText,
@@ -23,6 +23,7 @@ import { JsBlockCompilerPlugin } from './plugins/JsBlockCompilerPlugin';
 import { JsonCompilerPlugin } from './plugins/JsonCompilerPlugin';
 import { LayoutCompilerPlugin } from './plugins/LayoutCompilerPlugin';
 import { LoopsCompilerPlugin } from './plugins/LoopsCompilerPlugin';
+import { ScopedPosition } from './ScopedPosition';
 
 export type NodeCompiler<T extends Node> = (builder: FunctionBuilder, node: T) => void;
 export type FunctionCompiler = NodeCompiler<NodeFunction>;
@@ -232,7 +233,7 @@ export class Compiler {
   protected error(
     message: string,
     node: Node,
-    position?: Partial<NodePosition>,
+    position?: Partial<ScopedPosition>,
   ): never {
     throw new CompilerError(node.start.source, {
       start: position && position.start || node.start,
