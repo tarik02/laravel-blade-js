@@ -38,7 +38,11 @@
     "experimentalDecorators": false,
     "emitDecoratorMetadata": false
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "test"
   ]
 }

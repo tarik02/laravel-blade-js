@@ -56,9 +56,9 @@ export type Node =
   | NodeSequence
 ;
 
-// Omit<Node, 'start' | 'end'> does not work as expected
-declare const { start, end, ...rest }: Node;
-export type NodeWithoutPosition = typeof rest;
+// HACK: Omit<Node, 'start' | 'end'> does not work as expected
+export declare const { start: __start, end: __end, ...__rest }: Node;
+export type NodeWithoutPosition = typeof __rest;
 
 export const isNotEmptyContainer = (node?: NodeContainer): node is NodeContainer => {
   return node !== undefined && node.children.some(it => {
