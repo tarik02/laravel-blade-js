@@ -118,6 +118,16 @@ export class Runtime {
     });
   }
 
+  public aliasComponent(view: string, name: string): void {
+    this.registerFunction(name, async function* (env, params): AsyncIterable<string> {
+      env.beginComponent(view, params);
+    });
+
+    this.registerFunction('end' + name, async function* (env): AsyncIterable<string> {
+      yield* env.endComponent();
+    });
+  }
+
   private async getTemplate(name: string): Promise<CompiledTemplate> {
     if (this._cacheEnabled && this.compiledTemplates.has(name)) {
       const item = this.compiledTemplates.get(name)!;

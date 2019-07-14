@@ -6,20 +6,48 @@ type SectionInfo = {
   readonly isShow: boolean;
 };
 
+type TemplateInterceptor = (str: string) => void;
+
+type ComponentInfo = {
+  readonly name: string;
+  readonly args?: TemplateParams;
+  readonly slots: {
+    [name: string]: string[];
+  };
+};
+
 export class DefaultEnvironment implements Environment {
   public readonly runtime: Runtime;
   public readonly params: TemplateParams;
 
+  private readonly interceptorsStack: TemplateInterceptor[] = [];
   private readonly loopsStack: EnvironmentLoop[] = [];
   private readonly sections = new Map<string, SectionInfo>();
   private readonly stacks = new Map<string, Array<() => AsyncIterable<string>>>();
+  private readonly componentsStack: ComponentInfo[] = [];
 
   public constructor(runtime: Runtime, params: TemplateParams) {
     this.runtime = runtime;
     this.params = params;
   }
 
-  public print(text: any, escaped: boolean): string {
+  public async *process(input: AsyncIterable<string>): AsyncIterable<string> {
+    for await (const chunk of input) {
+      if (this.interceptorsStack.length === 0) {
+        yield chunk;
+      } else {
+        this.interceptorsStack[this.interceptorsStack.length - 1](chunk);
+      }
+    }
+  }
+
+  public async *print(text: any, escaped: boolean): AsyncIterable<string> {
+    if (text instanceof Array) {
+      // TODO: Special type for this
+      yield* text;
+      return;
+    }
+
     let result: string;
 
     switch (true) {
@@ -45,7 +73,7 @@ export class DefaultEnvironment implements Environment {
       break;
     }
 
-    return escaped ? encodeURIComponent(result) : result;
+    yield escaped ? encodeURIComponent(result) : result;
   }
 
   public async* call(name: string, ...args: any[]): AsyncIterable<string> {
@@ -71,7 +99,7 @@ export class DefaultEnvironment implements Environment {
       this.sections.set(name, {
         renderer: typeof renderer === 'string'
           ? async function* () {
-            yield print(renderer, true);
+            yield* print(renderer, true);
           }
           : async function* () {
             yield* old.renderer(renderer());
@@ -84,7 +112,7 @@ export class DefaultEnvironment implements Environment {
         renderer: typeof renderer === 'function'
           ? renderer
           : async function* () {
-            yield print(renderer, true);
+            yield* print(renderer, true);
           },
         isShow,
       });
@@ -211,5 +239,58 @@ export class DefaultEnvironment implements Environment {
     for (const item of stack) {
       yield* item();
     }
+  }
+
+  public beginComponent(name: string, args?: TemplateParams): void {
+    const component: ComponentInfo = {
+      name,
+      args,
+      slots: {},
+    };
+    this.componentsStack.push(component);
+
+    const slot: string[] = [];
+    component.slots['slot'] = slot;
+
+    this.interceptorsStack.push(str => {
+      slot.push(str);
+    });
+  }
+
+  public async *endComponent(): AsyncIterable<string> {
+    const component = this.componentsStack.pop();
+    if (component === undefined) {
+      throw new Error('Unexpected endComponent call');
+    }
+
+    this.interceptorsStack.pop();
+
+    yield* this.runtime.render(component.name, {
+      ...component.args,
+      ...component.slots,
+    });
+  }
+
+  public beginSlot(name: string): void {
+    if (this.componentsStack.length === 0) {
+      throw new Error('Unexpected beginSlot call');
+    }
+
+    const component = this.componentsStack[this.componentsStack.length - 1];
+    const slot: string[] = component.slots[name] || [];
+    component.slots[name] = slot;
+
+    this.interceptorsStack.push(str => {
+      slot.push(str);
+    });
+  }
+
+  public endSlot(): void {
+    if (this.componentsStack.length === 0) {
+      throw new Error('Unexpected endSlot call');
+    }
+
+    this.interceptorsStack.pop();
+    // TODO: Check this?
   }
 }

@@ -17,6 +17,7 @@ import {
   NodeText,
 } from './Node';
 import { parse, ParserSequenceConfig } from './Parser';
+import { ComponentsCompilerPlugin } from './plugins/ComponentsCompilerPlugin';
 import { ConditionalsCompilerPlugin } from './plugins/ConditionalsCompilerPlugin';
 import { IncludesCompilerPlugin } from './plugins/IncludesCompilerPlugin';
 import { JsBlockCompilerPlugin } from './plugins/JsBlockCompilerPlugin';
@@ -105,6 +106,7 @@ export class Compiler {
   }
 
   public addDefaults(): void {
+    this.addPlugin(ComponentsCompilerPlugin);
     this.addPlugin(ConditionalsCompilerPlugin);
     this.addPlugin(IncludesCompilerPlugin);
     this.addPlugin(JsBlockCompilerPlugin);
@@ -155,7 +157,7 @@ export class Compiler {
   }
 
   protected compileData(node: NodeData): void {
-    this.builder.append('yield __env.print(');
+    this.builder.append('yield* __env.print(');
     this.builder.append(node.value);
     this.builder.append(', ');
     this.builder.append(JSON.stringify(node.escaped));

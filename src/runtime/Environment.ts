@@ -26,7 +26,9 @@ export interface Environment {
   readonly runtime: Runtime;
   readonly params: TemplateParams;
 
-  print(text: any, escaped: boolean): string;
+  process(input: AsyncIterable<string>): AsyncIterable<string>;
+
+  print(text: any, escaped: boolean): AsyncIterable<string>;
 
   call(name: string, ...args: any[]): AsyncIterable<string>;
 
@@ -45,4 +47,10 @@ export interface Environment {
 
   push(name: string, renderer: () => AsyncIterable<string>, prepend?: boolean): void;
   stack(name: string): AsyncIterable<string>;
+
+  beginComponent(name: string, args?: TemplateParams): void;
+  endComponent(): AsyncIterable<string>;
+
+  beginSlot(name: string): void;
+  endSlot(): void;
 }
