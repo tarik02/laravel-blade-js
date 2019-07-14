@@ -7,10 +7,20 @@ import { trimAsyncIterable } from './trimAsyncIterable';
 
 export type CompiledTemplate = (env: Environment) => AsyncIterable<string>;
 
+type CompiledTemplateItem = {
+  readonly promise: Promise<CompiledTemplate>;
+
+  source?: TemplateSource;
+  value?: CompiledTemplate;
+  readonly time: number;
+};
+
 export class Runtime {
   private readonly sources: ReadonlyArray<TemplateSource>;
-  private readonly compiledTemplates = new Map<string, Promise<CompiledTemplate>>();
+  private readonly compiledTemplates = new Map<string, CompiledTemplateItem>();
   private readonly functions = new Map<string, RuntimeFunction>();
+
+  public cacheEnabled: boolean = true;
 
   public constructor(sources: ReadonlyArray<TemplateSource>) {
     this.sources = sources;
@@ -97,30 +107,47 @@ export class Runtime {
     });
   }
 
-  private getTemplate(name: string): Promise<CompiledTemplate> {
-    // TODO: An ability to disable cache
-    // TODO: An ability to check modified time and reload compiled template
+  private async getTemplate(name: string): Promise<CompiledTemplate> {
+    if (this.cacheEnabled && this.compiledTemplates.has(name)) {
+      const item = this.compiledTemplates.get(name)!;
 
-    if (this.compiledTemplates.has(name)) {
-      return this.compiledTemplates.get(name)!;
+      if (item.value !== undefined && await item.source!.isOutdated(name, item.value, item.time)) {
+        this.compiledTemplates.delete(name);
+      } else {
+        return item.promise;
+      }
     }
 
-    const promise = (async () => {
+    const promise = (async (): Promise<[TemplateSource, CompiledTemplate]> => {
       for (const source of this.sources) {
         const compiled = await source.getTemplateCompiledFile(name);
         if (compiled !== undefined) {
-          return compiled;
+          return [source, compiled];
         }
       }
 
       throw new Error(`Could not find template ${name}`);
     })();
 
-    this.compiledTemplates.set(name, promise);
+    if (this.cacheEnabled) {
+      const item: CompiledTemplateItem = {
+        promise: promise.then(([, value]) => value),
 
-    // Retry later on error
-    promise.catch(() => this.compiledTemplates.delete(name));
+        value: undefined,
+        time: Date.now(),
+      };
 
-    return promise;
+      this.compiledTemplates.set(name, item);
+
+      promise.then(([source, value]) => {
+        item.source = source;
+        item.value = value;
+      });
+
+      // Retry later on error
+      promise.catch(() => this.compiledTemplates.delete(name));
+    }
+
+    return (await promise)[1];
   }
 }
