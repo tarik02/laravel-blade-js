@@ -12,6 +12,7 @@ export class DefaultEnvironment implements Environment {
 
   private readonly loopsStack: EnvironmentLoop[] = [];
   private readonly sections = new Map<string, SectionInfo>();
+  private readonly stacks = new Map<string, Array<() => AsyncIterable<string>>>();
 
   public constructor(runtime: Runtime, params: TemplateParams) {
     this.runtime = runtime;
@@ -185,5 +186,30 @@ export class DefaultEnvironment implements Environment {
 
   public popLoop() {
     this.loopsStack.pop();
+  }
+
+  public push(name: string, renderer: () => AsyncIterable<string>, prepend: boolean = false): void {
+    let stack = this.stacks.get(name);
+    if (stack === undefined) {
+      stack = [];
+      this.stacks.set(name, stack);
+    }
+
+    if (prepend) {
+      stack.unshift(renderer);
+    } else {
+      stack.push(renderer);
+    }
+  }
+
+  public async *stack(name: string): AsyncIterable<string> {
+    const stack = this.stacks.get(name);
+    if (stack === undefined) {
+      return;
+    }
+
+    for (const item of stack) {
+      yield* item();
+    }
   }
 }

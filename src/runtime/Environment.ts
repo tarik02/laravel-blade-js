@@ -42,4 +42,7 @@ export interface Environment {
 
   pushLoop(iteratee: any): EnvironmentLoop;
   popLoop(): void;
+
+  push(name: string, renderer: () => AsyncIterable<string>, prepend?: boolean): void;
+  stack(name: string): AsyncIterable<string>;
 }

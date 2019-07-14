@@ -23,6 +23,7 @@ import { JsBlockCompilerPlugin } from './plugins/JsBlockCompilerPlugin';
 import { JsonCompilerPlugin } from './plugins/JsonCompilerPlugin';
 import { LayoutCompilerPlugin } from './plugins/LayoutCompilerPlugin';
 import { LoopsCompilerPlugin } from './plugins/LoopsCompilerPlugin';
+import { StacksCompilerPlugin } from './plugins/StacksCompilerPlugin';
 import { ScopedPosition } from './ScopedPosition';
 
 export type NodeCompiler<T extends Node> = (builder: FunctionBuilder, node: T) => void;
@@ -110,6 +111,7 @@ export class Compiler {
     this.addPlugin(JsonCompilerPlugin);
     this.addPlugin(LayoutCompilerPlugin);
     this.addPlugin(LoopsCompilerPlugin);
+    this.addPlugin(StacksCompilerPlugin);
   }
 
   public compile(source: Source): string {
