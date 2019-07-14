@@ -32,6 +32,7 @@ export type RawFunctionCompiler = NodeCompiler<NodeRawFunction>;
 
 export class Compiler {
   private builder!: StringBuilder;
+  private footerBuilder!: StringBuilder;
 
   private functions: { [name: string]: FunctionCompiler } = {};
   private sequences: { [name: string]: SequenceCompiler } = {};
@@ -41,6 +42,9 @@ export class Compiler {
 
   private functionBuilder: FunctionBuilder = {
     append: arg => this.builder.append(arg),
+    footer: {
+      append: arg => this.footerBuilder.append(arg),
+    },
 
     compileContainer: this.compileContainer.bind(this),
     compileComment: this.compileComment.bind(this),
@@ -110,6 +114,7 @@ export class Compiler {
 
   public compile(source: Source): string {
     this.builder = createStringBuilder();
+    this.footerBuilder = createStringBuilder();
 
     const stream = new CharStream(source);
     const lexer = createLexer(stream, {
@@ -122,10 +127,10 @@ export class Compiler {
     this.builder.append('(async function *(__env) {\n');
     this.builder.append('  with (__env.params) {\n');
     this.compileNode(node);
-    this.builder.append('  }\n');
-    this.builder.append('})');
+    this.footerBuilder.append('  }\n');
+    this.footerBuilder.append('})');
 
-    return this.builder.build();
+    return this.builder.build() + this.footerBuilder.build();
   }
 
   protected compileContainer(node: NodeContainer): void {

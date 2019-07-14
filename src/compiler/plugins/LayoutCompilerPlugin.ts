@@ -6,9 +6,9 @@ export class LayoutCompilerPlugin implements CompilerPlugin {
     compiler.addFunction('extends', (builder, node) => {
       builder.expectedArgs(node, 1);
 
-      builder.append('yield __env.extends(');
-      builder.append(node.args!.join(', '));
-      builder.append(');');
+      builder.footer.append('yield* __env.extends(');
+      builder.footer.append(node.args!.join(', '));
+      builder.footer.append(');\n');
     });
 
     compiler.addSequence('section', (args?: ReadonlyArray<string>) => (
@@ -23,6 +23,7 @@ export class LayoutCompilerPlugin implements CompilerPlugin {
         const ending = node.ending;
         builder.expectedArgs(ending, 2);
 
+        builder.append('yield* ');
         builder.append('__env.section(');
         builder.append(ending.args!.join(', '));
         builder.append(');');
@@ -31,15 +32,15 @@ export class LayoutCompilerPlugin implements CompilerPlugin {
         const starting = node.data[0][0];
         builder.expectedArgs(starting, 1);
 
-        if (isShow) {
-          builder.append('yield* ');
-        }
+        // if (isShow) {
+        builder.append('yield* ');
+        // }
         builder.append('__env.section(');
         builder.append(starting.args![0]);
         builder.append(', async function *(__parent) {\n');
         for (const [prefix, suffix] of node.data) {
           if (prefix.name === 'parent') {
-            builder.append('yield* __parent();\n');
+            builder.append('yield* __parent;\n');
           }
           builder.compileContainer(suffix);
         }
@@ -77,7 +78,7 @@ export class LayoutCompilerPlugin implements CompilerPlugin {
     compiler.addFunction('yield', (builder, node) => {
       builder.expectedArgs(node, 1, 2);
 
-      builder.append('yield __env.yield(');
+      builder.append('yield* __env.yield(');
       builder.append(node.args!.join(', '));
       builder.append(');');
     });

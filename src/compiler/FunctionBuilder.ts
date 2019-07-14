@@ -12,6 +12,9 @@ import { ScopedPosition } from './ScopedPosition';
 
 export interface FunctionBuilder {
   append(arg: string): void;
+  footer: {
+    append(arg: string): void;
+  };
 
   compileContainer(node: NodeContainer): void;
   compileComment(node: NodeComment): void;
