@@ -1,3 +1,5 @@
+import './asyncIterator';
+
 export const trimAsyncIterable = async function *(iteratee: AsyncIterable<string>): AsyncIterable<string> {
   const iterator = iteratee[Symbol.asyncIterator]();
 

@@ -1,3 +1,4 @@
+import './asyncIterator';
 import { DefaultEnvironment } from './DefaultEnvironment';
 import { Environment, TemplateParams } from './Environment';
 import { TemplateSource } from './TemplateSource';
@@ -51,8 +52,4 @@ export class Runtime {
 
     return promise;
   }
-}
-
-if (!('asyncIterator' in Symbol)) {
-  (Symbol as any).asyncIterator = (Symbol as any).for('asyncIterator');
 }
