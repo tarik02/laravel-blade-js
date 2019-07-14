@@ -6,12 +6,13 @@
     "lib": [
       "es6",
       "es7",
-      "dom"
+      "dom",
+      "esnext.asynciterable"
     ],
     "allowJs": false,
     "sourceMap": true,
     "outDir": "./out",
-    "tsBuildInfoFile": "./out/tsconfig.tsbuildinfo",
+    "tsBuildInfoFile": "./out/.tsbuildinfo",
     "removeComments": false,
     "importHelpers": true,
     "downlevelIteration": true,
