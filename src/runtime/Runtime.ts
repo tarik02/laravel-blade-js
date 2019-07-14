@@ -20,7 +20,18 @@ export class Runtime {
   private readonly compiledTemplates = new Map<string, CompiledTemplateItem>();
   private readonly functions = new Map<string, RuntimeFunction>();
 
-  public cacheEnabled: boolean = true;
+  private _cacheEnabled: boolean = true;
+
+  public get cacheEnabled(): boolean {
+    return this._cacheEnabled;
+  }
+
+  public set cacheEnabled(enabled: boolean) {
+    this._cacheEnabled = enabled;
+    if (!enabled) {
+      this.compiledTemplates.clear();
+    }
+  }
 
   public constructor(sources: ReadonlyArray<TemplateSource>) {
     this.sources = sources;
@@ -108,7 +119,7 @@ export class Runtime {
   }
 
   private async getTemplate(name: string): Promise<CompiledTemplate> {
-    if (this.cacheEnabled && this.compiledTemplates.has(name)) {
+    if (this._cacheEnabled && this.compiledTemplates.has(name)) {
       const item = this.compiledTemplates.get(name)!;
 
       if (item.value !== undefined && await item.source!.isOutdated(name, item.value, item.time)) {
@@ -129,7 +140,7 @@ export class Runtime {
       throw new Error(`Could not find template ${name}`);
     })();
 
-    if (this.cacheEnabled) {
+    if (this._cacheEnabled) {
       const item: CompiledTemplateItem = {
         promise: promise.then(([, value]) => value),
 
