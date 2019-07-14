@@ -22,7 +22,8 @@
     "no-bitwise": false,
     "variable-name": false,
     "no-conditional-assignment": false,
-    "no-unused-expression": true
+    "no-unused-expression": true,
+    "space-before-function-paren": false
   },
   "rulesDirectory": []
 }
