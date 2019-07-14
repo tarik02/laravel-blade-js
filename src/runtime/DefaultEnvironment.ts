@@ -7,11 +7,11 @@ type SectionInfo = {
 };
 
 export class DefaultEnvironment implements Environment {
-  private readonly runtime: Runtime;
+  public readonly runtime: Runtime;
+  public readonly params: TemplateParams;
+
   private readonly loopsStack: EnvironmentLoop[] = [];
   private readonly sections = new Map<string, SectionInfo>();
-
-  public readonly params: TemplateParams;
 
   public constructor(runtime: Runtime, params: TemplateParams) {
     this.runtime = runtime;
@@ -47,8 +47,9 @@ export class DefaultEnvironment implements Environment {
     return escaped ? encodeURIComponent(result) : result;
   }
 
-  public call(name: string, ...args: any[]) {
-    return [name, ...args];
+  public async* call(name: string, ...args: any[]): AsyncIterable<string> {
+    const fn = this.runtime.getFunction(name);
+    yield* fn(this, ...args);
   }
 
   public async* extends(name: string): AsyncIterable<string> {
@@ -68,10 +69,10 @@ export class DefaultEnvironment implements Environment {
 
       this.sections.set(name, {
         renderer: typeof renderer === 'string'
-          ? async function *() {
+          ? async function* () {
             yield print(renderer, true);
           }
-          : async function *() {
+          : async function* () {
             yield* old.renderer(renderer());
           }
         ,
@@ -81,7 +82,7 @@ export class DefaultEnvironment implements Environment {
       this.sections.set(name, {
         renderer: typeof renderer === 'function'
           ? renderer
-          : async function *() {
+          : async function* () {
             yield print(renderer, true);
           },
         isShow,
@@ -104,7 +105,7 @@ export class DefaultEnvironment implements Environment {
       return '';
     }
 
-    yield* section.renderer((async function *(): AsyncIterable<string> {
+    yield* section.renderer((async function* (): AsyncIterable<string> {
       if (def === undefined) {
         throw new Error(`Section '${name}' does not have parent.`);
       }

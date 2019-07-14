@@ -1,3 +1,5 @@
+import { Runtime } from './Runtime';
+
 export type TemplateParams = {
   [key: string]: any;
 };
@@ -21,11 +23,12 @@ export interface EnvironmentLoop {
 }
 
 export interface Environment {
+  readonly runtime: Runtime;
   readonly params: TemplateParams;
 
   print(text: any, escaped: boolean): string;
 
-  call(name: string, ...args: any[]): string | string[] | AsyncIterable<string>;
+  call(name: string, ...args: any[]): AsyncIterable<string>;
 
   extends(parent: string): AsyncIterable<string>;
 
