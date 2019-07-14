@@ -108,11 +108,9 @@ export class Runtime {
     const promise = (async () => {
       for (const source of this.sources) {
         const compiled = await source.getTemplateCompiledFile(name);
-        if (compiled === undefined) {
-          continue;
+        if (compiled !== undefined) {
+          return compiled;
         }
-
-        return (new Function('__env', 'return ' + compiled + '(__env)')) as CompiledTemplate;
       }
 
       throw new Error(`Could not find template ${name}`);
