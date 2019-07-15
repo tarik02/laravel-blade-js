@@ -1,6 +1,6 @@
 import { Compiler } from '../compiler/Compiler';
-import { CompilerPlugin } from './CompilerPlugin';
 import { isNotEmptyContainer } from '../parser/Node';
+import { CompilerPlugin } from './CompilerPlugin';
 
 export class ComponentsCompilerPlugin implements CompilerPlugin {
   public init(compiler: Compiler): void {

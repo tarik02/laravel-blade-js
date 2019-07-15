@@ -1,6 +1,6 @@
 import { Compiler } from '../compiler/Compiler';
-import { CompilerPlugin } from './CompilerPlugin';
 import { isNotEmptyContainer, NodeContainer } from '../parser/Node';
+import { CompilerPlugin } from './CompilerPlugin';
 
 export class ConditionalsCompilerPlugin implements CompilerPlugin {
   public init(compiler: Compiler): void {

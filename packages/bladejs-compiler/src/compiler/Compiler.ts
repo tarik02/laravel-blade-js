@@ -1,4 +1,3 @@
-import { CompilerPlugin } from '../plugin/CompilerPlugin';
 import { CompilerError } from '../error/CompilerError';
 import { createLexer } from '../lexer/Lexer';
 import {
@@ -13,6 +12,7 @@ import {
   NodeText,
 } from '../parser/Node';
 import { parse, ParserSequenceConfig } from '../parser/Parser';
+import { CompilerPlugin } from '../plugin/CompilerPlugin';
 import { ComponentsCompilerPlugin } from '../plugin/ComponentsCompilerPlugin';
 import { ConditionalsCompilerPlugin } from '../plugin/ConditionalsCompilerPlugin';
 import { IncludesCompilerPlugin } from '../plugin/IncludesCompilerPlugin';
