@@ -8,8 +8,12 @@ jobs:
   include:
   - stage: 'bladejs'
     before_install: cd 'packages/bladejs'
+    before_script: cd 'packages/bladejs'
+    before_deploy: cd 'packages/bladejs'
   - stage: 'bladejs-compiler'
     before_install: cd 'packages/bladejs-compiler'
+    before_script: cd 'packages/bladejs-compiler'
+    before_deploy: cd 'packages/bladejs-compiler'
 
 install:
 - yarn install
