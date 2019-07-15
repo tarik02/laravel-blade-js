@@ -10,7 +10,7 @@ env:
   - CURRENT_PACKAGE=bladejs-compiler
 
 before_install:
-- 'cd: $CURRENT_PACKAGE'
+- cd $CURRENT_PACKAGE
 
 install:
 - yarn install
