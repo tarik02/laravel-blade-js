@@ -30,7 +30,6 @@ test_script:
 - node --version
 - yarn --version
 
-- ps: cd packages/$env:current_package
 - yarn lint
 - yarn build
 - yarn test
