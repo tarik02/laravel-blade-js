@@ -28,13 +28,13 @@ test_script:
 
 - cd packages/bladejs
 - yarn lint
-- yarn build:prod
+- yarn build
 - yarn test
 - cd ../..
 
 - cd packages/bladejs-compiler
 - yarn lint
-- yarn build:prod
+- yarn build
 - yarn test
 - cd ../..
 

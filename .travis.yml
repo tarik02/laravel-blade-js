@@ -4,16 +4,13 @@ node_js:
 - '10'
 - '12'
 
-jobs:
-  include:
-  - stage: 'bladejs'
-    before_install: cd 'packages/bladejs'
-    before_script: cd 'packages/bladejs'
-    before_deploy: cd 'packages/bladejs'
-  - stage: 'bladejs-compiler'
-    before_install: cd 'packages/bladejs-compiler'
-    before_script: cd 'packages/bladejs-compiler'
-    before_deploy: cd 'packages/bladejs-compiler'
+env:
+  matrix:
+  - CURRENT_PACKAGE=bladejs
+  - CURRENT_PACKAGE=bladejs-compiler
+
+before_install:
+- 'cd: $CURRENT_PACKAGE'
 
 install:
 - yarn install
@@ -23,7 +20,7 @@ script:
 - yarn --version
 
 - yarn lint
-- yarn build:prod
+- yarn build
 - yarn test
 
 notifications:
@@ -38,3 +35,14 @@ deploy:
     tags: true
     branch: master
     repo: Tarik02/laravel-blade-js
+
+jobs:
+  include:
+  - stage: 'bladejs'
+    before_install: cd 'packages/bladejs'
+    before_script: cd 'packages/bladejs'
+    before_deploy: cd 'packages/bladejs'
+  - stage: 'bladejs-compiler'
+    before_install: cd 'packages/bladejs-compiler'
+    before_script: cd 'packages/bladejs-compiler'
+    before_deploy: cd 'packages/bladejs-compiler'
