@@ -1,21 +1,25 @@
 environment:
   matrix:
   - nodejs_version: '8'
+    current_package: 'bladejs'
+  - nodejs_version: '8'
+    current_package: 'bladejs-compiler'
   - nodejs_version: '10'
+    current_package: 'bladejs'
+  - nodejs_version: '10'
+    current_package: 'bladejs-compiler'
   - nodejs_version: '12'
+    current_package: 'bladejs'
+  - nodejs_version: '12'
+    current_package: 'bladejs-compiler'
 
 install:
 - ps: Install-Product node $env:nodejs_version
 - npm install --global yarn@latest
 - set PATH=%APPDATA%\npm;%PATH%
 
-- cd packages/bladejs
+- ps: cd packages/$env:current_package
 - yarn install
-- cd ../..
-
-- cd packages/bladejs-compiler
-- yarn install
-- cd ../..
 
 matrix:
   fast_finish: true
@@ -26,17 +30,10 @@ test_script:
 - node --version
 - yarn --version
 
-- cd packages/bladejs
+- ps: cd packages/$env:current_package
 - yarn lint
 - yarn build
 - yarn test
-- cd ../..
-
-- cd packages/bladejs-compiler
-- yarn lint
-- yarn build
-- yarn test
-- cd ../..
 
 cache:
 - '%APPDATA%\npm-cache'
