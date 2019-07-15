@@ -12,8 +12,8 @@
     "html",
     "laravel"
   ],
-  "main": "out/index.js",
-  "types": "out/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "build:prod": "tsc & tsc -p tsconfig-declarations.json",
