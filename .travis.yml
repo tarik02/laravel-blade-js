@@ -10,7 +10,7 @@ env:
   - CURRENT_PACKAGE=bladejs-compiler
 
 before_install:
-- cd $CURRENT_PACKAGE
+- cd packages/$CURRENT_PACKAGE
 
 install:
 - yarn install
@@ -27,6 +27,7 @@ notifications:
   email: false
 
 deploy:
+  skip_cleanup: true
   provider: npm
   email: Taras.Fomin@gmail.com
   api_key:
@@ -34,15 +35,5 @@ deploy:
   on:
     tags: true
     branch: master
+    condition: '$TRAVIS_NODE_VERSION = 12'
     repo: Tarik02/laravel-blade-js
-
-jobs:
-  include:
-  - stage: 'bladejs'
-    before_install: cd 'packages/bladejs'
-    before_script: cd 'packages/bladejs'
-    before_deploy: cd 'packages/bladejs'
-  - stage: 'bladejs-compiler'
-    before_install: cd 'packages/bladejs-compiler'
-    before_script: cd 'packages/bladejs-compiler'
-    before_deploy: cd 'packages/bladejs-compiler'
