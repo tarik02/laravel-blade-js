@@ -54,11 +54,40 @@ export type Node =
   | NodeFunction
   | NodeRawFunction
   | NodeSequence
-;
+  ;
 
-// HACK: Omit<Node, 'start' | 'end'> does not work as expected
-export declare const { start: __start, end: __end, ...__rest }: Node;
-export type NodeWithoutPosition = typeof __rest;
+
+// Node types without position (start, end)
+
+export type NodeContainerWP = Omit<NodeContainer, 'start' | 'end' | 'children'> & {
+  readonly children: ReadonlyArray<NodeWithoutPosition>;
+};
+
+export type NodeCommentWP = Omit<NodeComment, 'start' | 'end'>;
+
+export type NodeTextWP = Omit<NodeText, 'start' | 'end'>;
+
+export type NodeDataWP = Omit<NodeData, 'start' | 'end'>;
+
+export type NodeFunctionWP = Omit<NodeFunction, 'start' | 'end'>;
+
+export type NodeRawFunctionWP = Omit<NodeRawFunction, 'start' | 'end'>;
+
+export type NodeSequenceWP = Omit<NodeSequence, 'start' | 'end' | 'data' | 'ending'> & {
+  readonly data: ReadonlyArray<[NodeFunctionWP, NodeContainerWP]>;
+  readonly ending: NodeFunctionWP;
+};
+
+export type NodeWithoutPosition =
+  | NodeContainerWP
+  | NodeCommentWP
+  | NodeTextWP
+  | NodeDataWP
+  | NodeFunctionWP
+  | NodeRawFunctionWP
+  | NodeSequenceWP
+  ;
+
 
 export const isNotEmptyContainer = (node?: NodeContainer): node is NodeContainer => {
   return node !== undefined && node.children.some(it => {
