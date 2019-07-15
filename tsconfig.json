@@ -11,12 +11,10 @@
     ],
     "allowJs": false,
     "sourceMap": true,
-    "outDir": "./lib",
-    "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "removeComments": false,
     "importHelpers": true,
     "downlevelIteration": true,
-    "isolatedModules": true,
+    "declaration": true,
 
     "strict": true,
     "noImplicitAny": true,
@@ -33,17 +31,8 @@
     "noFallthroughCasesInSwitch": true,
 
     "moduleResolution": "node",
-    "baseUrl": "./src",
-    "allowSyntheticDefaultImports": true,
 
     "experimentalDecorators": false,
     "emitDecoratorMetadata": false
-  },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "test"
-  ]
+  }
 }

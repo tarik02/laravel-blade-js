@@ -2,7 +2,8 @@
 	"files.exclude": {
 		"**/.git": true,
 		"**/.DS_Store": true,
-		"node_modules": true
+		"**/lib": true,
+		"**/node_modules": true
 	},
 	"prettier.singleQuote": true,
 	"prettier.useTabs": false,

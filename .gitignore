@@ -1,4 +1,4 @@
 /.idea
-/node_modules
-/lib
-/yarn-error.log
+/packages/*/node_modules
+/packages/*/lib
+yarn-error.log

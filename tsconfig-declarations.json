@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig",
-  "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "isolatedModules": false,
-    "declaration": true
-  }
-}
