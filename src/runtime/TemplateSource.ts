@@ -2,6 +2,9 @@ import { CompiledTemplate } from './Runtime';
 
 export interface TemplateSource {
   /**
+   * This function should return async generator function which yields chunks of text.
+   * The returned function gets only one argument - {Environment}.
+   *
    * @param name The name of the template
    * @return {Promise<CompiledTemplate | undefined>} Compiled template content or undefined if not found
    */
