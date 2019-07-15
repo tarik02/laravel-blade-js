@@ -56,38 +56,49 @@ export type Node =
   | NodeSequence
   ;
 
-
-// Node types without position (start, end)
-
-export type NodeContainerWP = Omit<NodeContainer, 'start' | 'end' | 'children'> & {
-  readonly children: ReadonlyArray<NodeWithoutPosition>;
-};
-
-export type NodeCommentWP = Omit<NodeComment, 'start' | 'end'>;
-
-export type NodeTextWP = Omit<NodeText, 'start' | 'end'>;
-
-export type NodeDataWP = Omit<NodeData, 'start' | 'end'>;
-
-export type NodeFunctionWP = Omit<NodeFunction, 'start' | 'end'>;
-
-export type NodeRawFunctionWP = Omit<NodeRawFunction, 'start' | 'end'>;
-
-export type NodeSequenceWP = Omit<NodeSequence, 'start' | 'end' | 'data' | 'ending'> & {
-  readonly data: ReadonlyArray<[NodeFunctionWP, NodeContainerWP]>;
-  readonly ending: NodeFunctionWP;
-};
-
+// node types without position (start, end)
 export type NodeWithoutPosition =
-  | NodeContainerWP
-  | NodeCommentWP
-  | NodeTextWP
-  | NodeDataWP
-  | NodeFunctionWP
-  | NodeRawFunctionWP
-  | NodeSequenceWP
+  | Omit<NodeContainer, 'start' | 'end'>
+  | Omit<NodeComment, 'start' | 'end'>
+  | Omit<NodeText, 'start' | 'end'>
+  | Omit<NodeData, 'start' | 'end'>
+  | Omit<NodeFunction, 'start' | 'end'>
+  | Omit<NodeRawFunction, 'start' | 'end'>
+  | Omit<NodeSequence, 'start' | 'end'>
   ;
 
+// recursive node types without position (start, end)
+
+export type NodeContainerRWP = Omit<NodeContainer, 'start' | 'end' | 'children'> & {
+  readonly children: ReadonlyArray<NodeRecursiveWithoutPosition>;
+};
+
+export type NodeCommentRWP = Omit<NodeComment, 'start' | 'end'>;
+
+export type NodeTextRWP = Omit<NodeText, 'start' | 'end'>;
+
+export type NodeDataRWP = Omit<NodeData, 'start' | 'end'>;
+
+export type NodeFunctionRWP = Omit<NodeFunction, 'start' | 'end'>;
+
+export type NodeRawFunctionRWP = Omit<NodeRawFunction, 'start' | 'end'>;
+
+export type NodeSequenceRWP = Omit<NodeSequence, 'start' | 'end' | 'data' | 'ending'> & {
+  readonly data: ReadonlyArray<[NodeFunctionRWP, NodeContainerRWP]>;
+  readonly ending: NodeFunctionRWP;
+};
+
+export type NodeRecursiveWithoutPosition =
+  | NodeContainerRWP
+  | NodeCommentRWP
+  | NodeTextRWP
+  | NodeDataRWP
+  | NodeFunctionRWP
+  | NodeRawFunctionRWP
+  | NodeSequenceRWP
+  ;
+
+// utilities
 
 export const isNotEmptyContainer = (node?: NodeContainer): node is NodeContainer => {
   return node !== undefined && node.children.some(it => {
