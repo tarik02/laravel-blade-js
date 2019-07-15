@@ -6,6 +6,8 @@ use(chaiExclude);
 import { CharStream } from '../src/compiler/CharStream';
 import { createLexer, LexerConfig } from '../src/compiler/Lexer';
 import { LexerError } from '../src/compiler/LexerError';
+import { NodeRecursiveWithoutPosition } from '../src/compiler/Node';
+import { parse, ParserConfig } from '../src/compiler/Parser';
 import { Token } from '../src/compiler/Token';
 import { Source } from '../src/types/Source';
 
@@ -41,4 +43,15 @@ export const lexError = (text: string, config?: Partial<LexerConfig>): LexerErro
 
   expect.fail(undefined, undefined, 'lex expected to throw an error');
   throw new Error('unreachable');
+};
+
+export const parseAssert = (
+  text: string,
+  expected: NodeRecursiveWithoutPosition,
+  parserConfig?: Partial<ParserConfig>,
+  lexerConfig?: Partial<LexerConfig>,
+) => {
+  const actual = parse(createLexerFromText(text, lexerConfig), parserConfig);
+
+  expect(actual).excludingEvery(['start', 'end']).deep.eq(expected);
 };
