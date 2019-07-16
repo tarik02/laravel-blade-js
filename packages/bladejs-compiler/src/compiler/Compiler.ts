@@ -129,9 +129,8 @@ export class Compiler {
     });
 
     this.builder.append('(async function *(__env) {\n');
-    this.builder.append('  with (__env.params) {\n');
+    this.builder.append('eval(__env.serializeParams());');
     this.compileNode(node);
-    this.footerBuilder.append('  }\n');
     this.footerBuilder.append('})');
 
     return this.builder.build() + this.footerBuilder.build();

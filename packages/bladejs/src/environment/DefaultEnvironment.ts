@@ -31,6 +31,24 @@ export class DefaultEnvironment implements Environment {
     this.params = params;
   }
 
+  public serializeParams(): string {
+    let result = 'const __params = __env.params;';
+
+    const params = this.params;
+    for (const key in params) {
+      if (params.hasOwnProperty(key) && key.match(/^[a-zA-Z_][a-zA-Z_0-9]*$/)) {
+        const value = params[key];
+        if (typeof value === 'function') {
+          result += `var ${key} = __params['${key}'].bind(null, __env);`;
+        } else {
+          result += `var ${key} = __params['${key}'];`;
+        }
+      }
+    }
+
+    return result;
+  }
+
   public async *process(input: AsyncIterable<string>): AsyncIterable<string> {
     for await (const chunk of input) {
       if (this.interceptorsStack.length === 0) {

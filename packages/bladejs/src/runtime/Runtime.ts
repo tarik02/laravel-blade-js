@@ -93,7 +93,7 @@ export class Runtime {
 
   public async *renderInternal(name: string, environment: Environment): AsyncIterable<string> {
     const template = await this.getTemplate(name);
-    yield* environment.process(template(environment));
+    yield* environment.process(template.call(environment, environment));
   }
 
   public getFunction(name: string): RuntimeFunction {
