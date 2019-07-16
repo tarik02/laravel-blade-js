@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+require('../lib/cli/bladejs-compiler.js').default(
+    require('path').basename(__filename),
+    process.argv.slice(2),
+    new (require('../lib/cli/StdOutput.js').StdOutput),
+).then(process.exit, error => {
+    console.error(error);
+    process.exit(-1);
+});
