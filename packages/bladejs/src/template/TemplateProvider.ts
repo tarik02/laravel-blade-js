@@ -13,7 +13,7 @@ export interface TemplateProvider {
   /**
    * @param name The name of the template
    * @param template The result of corresponding {getTemplateCompiledFile} call
-   * @param creationTime The time of corresponding {getTemplateCompiledFile} call
+   * @param creationTime The time (Date.now) of corresponding {getTemplateCompiledFile} call
    * @return Whether the template is already outdated
    */
   isOutdated(name: string, template: CompiledTemplate, creationTime: number): Promise<boolean>;
