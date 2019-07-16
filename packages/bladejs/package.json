@@ -1,5 +1,5 @@
 {
-  "name": "bladejs",
+  "name": "@tarik02/bladejs",
   "version": "2.0.0",
   "license": "MIT",
   "author": {
@@ -29,6 +29,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tarik02/laravel-blade-js.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "tslib": "^1.10.0"

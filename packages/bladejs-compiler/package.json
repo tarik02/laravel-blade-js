@@ -1,5 +1,5 @@
 {
-  "name": "bladejs-compiler",
+  "name": "@tarik02/bladejs-compiler",
   "version": "2.0.0",
   "license": "MIT",
   "author": {
@@ -33,6 +33,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tarik02/laravel-blade-js.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "ansi-colors": "^4.1.1",
