@@ -1,0 +1,39 @@
+language: node_js
+node_js:
+- '8'
+- '10'
+- '12'
+
+env:
+  matrix:
+  - CURRENT_PACKAGE=bladejs
+  - CURRENT_PACKAGE=bladejs-compiler
+
+before_install:
+- cd packages/$CURRENT_PACKAGE
+
+install:
+- yarn install
+
+script:
+- node --version
+- yarn --version
+
+- yarn lint
+- yarn build
+- yarn test
+
+notifications:
+  email: false
+
+deploy:
+  skip_cleanup: true
+  provider: npm
+  email: Taras.Fomin@gmail.com
+  api_key:
+    secure: CwNSkR8ZhJQN6kaKRtNCV4+dKbL3xFJxqW/0B4hyYdmc4oHiXiLr0q3V23ZW8QSVmWQbZnWUPTcjaDYFzSySWG+dCxblEvzQNL+kZe/3jrPKCzI9i+8N4MyRBLPe21wVKDQ9eQjFg/ycNSdmhj9BFUSKrJKncAeL9qeQBcC1P6bYLWrWVr7PVpo5TdiPyH/m0RXLR8DvZ1uQ21NdtHfw3CJfBlglgcilnGn/Cqhp0ExkIOPReTOGfzhOg+zlz9z4ilX/CI6z0S8L++pxLN+RuBcg8NspfOzjzRiaf8UqtcEsk+EdjVTj1fuRmi2YmxZuVNrBS8Y01dw73lH9Mkqib0qZpbBqMn4ZxK8EVGfNHGD2p3Ph0u/uBj6mjRAp245DU/IPtarJs39IdEQ6ZDUlym5EMWMZ/S0yTJ3TwGURqe/FUggUlWwzRjojRqBwwcGIFvr/TiAPeV5TpLarFTXETnK68kUuXuJ6yLc9t2usdsjP7NVsboPc+w4l3WyYYZaR8yMdgj3RQE1KAhQ9Qu7MNL3bfyJgiXpbZEjQP0c2NPKLLgwUDg0zpX6KPe/uTnHnEjs+o5xaZ3XlbW6yOrky5UBsTO10lgb0plWAg5gTt59Oc/L59x9sx5ej5w7BT/kIPOJOYc9jB7lfeR1SfawOwh9EeS2VjgoMOQT9Ozux+PM=
+  on:
+    tags: true
+    branch: master
+    condition: '$TRAVIS_NODE_VERSION = 12'
+    repo: Tarik02/laravel-blade-js

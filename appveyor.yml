@@ -1,0 +1,38 @@
+environment:
+  matrix:
+  - nodejs_version: '8'
+    current_package: 'bladejs'
+  - nodejs_version: '8'
+    current_package: 'bladejs-compiler'
+  - nodejs_version: '10'
+    current_package: 'bladejs'
+  - nodejs_version: '10'
+    current_package: 'bladejs-compiler'
+  - nodejs_version: '12'
+    current_package: 'bladejs'
+  - nodejs_version: '12'
+    current_package: 'bladejs-compiler'
+
+install:
+- ps: Install-Product node $env:nodejs_version
+- npm install --global yarn@latest
+- set PATH=%APPDATA%\npm;%PATH%
+
+- ps: cd packages/$env:current_package
+- yarn install
+
+matrix:
+  fast_finish: true
+build: false
+shallow_clone: true
+
+test_script:
+- node --version
+- yarn --version
+
+- yarn lint
+- yarn build
+- yarn test
+
+cache:
+- '%APPDATA%\npm-cache'
