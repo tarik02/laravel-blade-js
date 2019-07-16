@@ -8,6 +8,7 @@ env:
   matrix:
   - CURRENT_PACKAGE=bladejs
   - CURRENT_PACKAGE=bladejs-compiler
+  - CURRENT_PACKAGE=bladejs-loader
 
 before_install:
 - cd packages/$CURRENT_PACKAGE

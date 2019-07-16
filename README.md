@@ -6,13 +6,16 @@
 The project is divided into two separate packages:
 - compiler - package that can compile blade templates into pure JavaScript async generator functions.
 - runtime - package that can run these functions.
-- loader (not ready yet) - webpack loader.
+- loader - webpack loader.
 
 Compiler can be used together with runtime, but it is recommended to compile templates before using them in server or browser.
 
 ## Installation and Usage
 - [runtime](https://github.com/Tarik02/packages/bladejs)
 - [compiler](https://github.com/Tarik02/packages/bladejs-compiler)
+- [loader](https://github.com/Tarik02/packages/bladejs-loader)
 
 ## Examples
 - [express](https://github.com/Tarik02/examples/express)
+- [webpack loader](https://github.com/Tarik02/examples/loader)
+

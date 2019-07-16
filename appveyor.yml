@@ -4,14 +4,20 @@ environment:
     current_package: 'bladejs'
   - nodejs_version: '8'
     current_package: 'bladejs-compiler'
+  - nodejs_version: '8'
+    current_package: 'bladejs-loader'
   - nodejs_version: '10'
     current_package: 'bladejs'
   - nodejs_version: '10'
     current_package: 'bladejs-compiler'
+  - nodejs_version: '10'
+    current_package: 'bladejs-loader'
   - nodejs_version: '12'
     current_package: 'bladejs'
   - nodejs_version: '12'
     current_package: 'bladejs-compiler'
+  - nodejs_version: '12'
+    current_package: 'bladejs-loader'
 
 install:
 - ps: Install-Product node $env:nodejs_version

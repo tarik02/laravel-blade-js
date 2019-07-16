@@ -1,0 +1,15 @@
+{
+  "name": "example-loader",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@tarik02/bladejs": "^2.1.0"
+  },
+  "devDependencies": {
+    "@tarik02/bladejs-compiler": "^2.1.0",
+    "@tarik02/bladejs-loader": "^2.1.0",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.6"
+  }
+}
