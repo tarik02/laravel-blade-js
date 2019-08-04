@@ -175,7 +175,7 @@ Hello World
         {
           type: 'data',
           escaped: true,
-          value: ' user.name ',
+          value: 'user.name',
         },
         {
           type: 'text',
@@ -184,7 +184,7 @@ Hello World
         {
           type: 'data',
           escaped: true,
-          value: ' user.status ',
+          value: 'user.status',
         },
         {
           type: 'text',
@@ -193,7 +193,7 @@ Hello World
         {
           type: 'data',
           escaped: false,
-          value: ' user.badge ',
+          value: 'user.badge',
         },
         {
           type: 'text',
@@ -265,6 +265,75 @@ Profile info:
       ], {
         rawFunctions: ['verbatim', 'js', 'markdown'],
       });
+    });
+
+    it('sample-6 (filters)', () => {
+      lexAssert(`
+{{ 'test' | ucfirst }}
+{{ 'hello' | ucfirst | uclast }}
+{{ ' HeLlO ' | trim }}
+{{ name | ucfirst | substr:0,1 }}
+{!! time | format-time:'Y-m-d H:i:s' !!}
+`.trim(), [
+        {
+          type: 'data',
+          escaped: true,
+          value: '\'test\'',
+          filters: [
+            { name: 'ucfirst', args: [] },
+          ],
+        },
+        {
+          type: 'text',
+          value: '\n',
+        },
+        {
+          type: 'data',
+          escaped: true,
+          value: '\'hello\'',
+          filters: [
+            { name: 'ucfirst', args: [] },
+            { name: 'uclast', args: [] },
+          ],
+        },
+        {
+          type: 'text',
+          value: '\n',
+        },
+        {
+          type: 'data',
+          escaped: true,
+          value: '\' HeLlO \'',
+          filters: [
+            { name: 'trim', args: [] },
+          ],
+        },
+        {
+          type: 'text',
+          value: '\n',
+        },
+        {
+          type: 'data',
+          escaped: true,
+          value: 'name',
+          filters: [
+            { name: 'ucfirst', args: [] },
+            { name: 'substr', args: ['0', '1'] },
+          ],
+        },
+        {
+          type: 'text',
+          value: '\n',
+        },
+        {
+          type: 'data',
+          escaped: false,
+          value: 'time',
+          filters: [
+            { name: 'format-time', args: ['\'Y-m-d H:i:s\''] },
+          ],
+        },
+      ]);
     });
   });
 });

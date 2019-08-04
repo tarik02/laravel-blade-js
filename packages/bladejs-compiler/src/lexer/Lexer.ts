@@ -4,7 +4,7 @@ import { Location } from '../source/Location';
 import { Position } from '../source/Position';
 import { Source } from '../source/Source';
 import { Char } from '../string/Char';
-import { FullToken } from './Token';
+import { FullToken, TokenData } from './Token';
 
 export interface Lexer {
   readonly source: Source;
@@ -66,6 +66,149 @@ export const createLexer = (input: Scanner, lexerConfig?: Partial<LexerConfig>):
     }
   };
 
+  const parseStringUntil = <T extends string>(
+    offset: number,
+    start: number,
+    data: string,
+    delimiters: T[],
+  ): [T | undefined, string, number | undefined] => {
+    let result = '';
+    let escape = false;
+    let quote: string | undefined;
+    const braces: string[] = [];
+
+    for (let i = start; i < data.length; ++i) {
+      const c = data[i];
+
+      if (quote !== undefined) {
+        if (escape) {
+          result += c;
+          escape = false;
+          continue;
+        }
+
+        if (c === '\\') {
+          escape = true;
+          continue;
+        }
+
+        result += c;
+        if (quote === c) {
+          quote = undefined;
+        }
+        continue;
+      }
+
+      if (braces.length === 0 && delimiters.indexOf(c as T) !== -1) {
+        return [c as T, result, i + 1];
+      }
+
+      switch (c) {
+      case '\'':
+      case '"':
+      case '`':
+        result += c;
+        quote = c;
+        break;
+      case '(':
+        result += c;
+        braces.push(')');
+        break;
+      case '{':
+        result += c;
+        braces.push('}');
+        break;
+      case '[':
+        result += c;
+        braces.push(']');
+        break;
+      case ')':
+      case '}':
+      case ']':
+        result += c;
+
+        const expected = braces.pop();
+        if (expected !== c) {
+          error(
+            expected
+              ? `expected ${JSON.stringify(expected)}, got ${JSON.stringify(c)}`
+              : `unexpected ${JSON.stringify(c)}`
+            ,
+            input.position.relative(offset + - data.length + i),
+          );
+        }
+        break;
+      default:
+        result += c;
+        break;
+      }
+    }
+
+    return [undefined, result, undefined];
+  };
+
+  const parseFilters = (offset: number, data: string): Pick<TokenData, 'value' | 'filters'> => {
+    let position: number = 0;
+    let value: string;
+    {
+      const [delimiter, newValue, newPosition] = parseStringUntil(offset, position, data, ['|']);
+      value = newValue.trim();
+      if (newPosition === undefined || delimiter === undefined) {
+        return {
+          value,
+        };
+      }
+      position = newPosition;
+    }
+
+    const filters: Array<NonNullable<TokenData['filters']>[0]> = [];
+    let filterName: string | undefined;
+    let args: string[] = [];
+
+    while (data !== '') {
+      const [delimiter, item, newPosition] = parseStringUntil(
+        offset,
+        position,
+        data,
+        [filterName === undefined ? ':' : ',', '|'],
+      );
+
+      if (filterName === undefined) {
+        filterName = item.trim();
+      } else {
+        args.push(item.trim());
+      }
+
+      if (delimiter === '|') {
+        filters.push({
+          name: filterName,
+          args,
+        });
+
+        filterName = undefined;
+        args = [];
+      }
+
+      if (newPosition === undefined || delimiter === undefined) {
+        break;
+      }
+
+      position = newPosition;
+    }
+
+    if (filterName !== undefined) {
+      filters.push({
+        name: filterName,
+        args,
+      });
+    }
+
+    return {
+      value,
+      filters,
+    };
+  };
+
   const generator = function *(): IterableIterator<FullToken> {
     while (!input.eof()) {
       const c = input.peek();
@@ -98,7 +241,7 @@ export const createLexer = (input: Scanner, lexerConfig?: Partial<LexerConfig>):
             ...tokenPosition(),
             type: 'data',
             escaped: false,
-            value: data,
+            ...parseFilters(-3, data),
           }), position);
 
           continue;
@@ -144,7 +287,7 @@ export const createLexer = (input: Scanner, lexerConfig?: Partial<LexerConfig>):
               ...tokenPosition(),
               type: 'data',
               escaped: true,
-              value: data,
+              ...parseFilters(-2, data),
             }), position);
           }
 

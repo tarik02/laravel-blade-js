@@ -121,6 +121,7 @@ export const parse = (lexer: Lexer, parserConfig?: Partial<ParserConfig>): Node 
         type: 'data',
         escaped: tok.escaped,
         value: tok.value,
+        filters: tok.filters,
       };
     case 'function':
       const fn: Node = {

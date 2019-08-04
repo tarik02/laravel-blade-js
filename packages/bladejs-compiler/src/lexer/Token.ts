@@ -18,6 +18,10 @@ export type TokenData = BaseToken & {
   readonly type: 'data';
   readonly escaped: boolean;
   readonly value: string;
+  readonly filters?: ReadonlyArray<{
+    readonly name: string;
+    readonly args: ReadonlyArray<string>;
+  }>;
 };
 
 export type TokenFunction = BaseToken & {
