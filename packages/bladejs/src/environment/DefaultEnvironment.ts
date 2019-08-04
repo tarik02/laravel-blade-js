@@ -1,4 +1,5 @@
 import { Runtime } from '../runtime/Runtime';
+import { htmlspecialchars } from '../util/htmlspecialchars';
 import { Environment, EnvironmentLoop, TemplateParams } from './Environment';
 
 type SectionInfo = {
@@ -91,7 +92,7 @@ export class DefaultEnvironment implements Environment {
       break;
     }
 
-    yield escaped ? encodeURIComponent(result) : result;
+    yield escaped ? htmlspecialchars(result) : result;
   }
 
   public async* call(name: string, ...args: any[]): AsyncIterable<string> {
