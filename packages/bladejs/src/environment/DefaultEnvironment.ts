@@ -95,6 +95,11 @@ export class DefaultEnvironment implements Environment {
     yield escaped ? htmlspecialchars(result) : result;
   }
 
+  public filter(text: any, name: string, ...args: any[]): PromiseLike<string> | string {
+    const fn = this.runtime.getFilter(name);
+    return fn(this, text, ...args);
+  }
+
   public async* call(name: string, ...args: any[]): AsyncIterable<string> {
     const fn = this.runtime.getFunction(name);
     yield* fn(this, ...args);

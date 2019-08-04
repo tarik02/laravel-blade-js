@@ -4,6 +4,7 @@ import { CompiledTemplate } from '../template/CompiledTemplate';
 import { TemplateProvider } from '../template/TemplateProvider';
 import '../util/asyncIterator';
 import { trimAsyncIterable } from '../util/trimAsyncIterable';
+import { RuntimeFilter } from './RuntimeFilter';
 import { RuntimeFunction } from './RuntimeFunction';
 
 type CompiledTemplateItem = {
@@ -17,6 +18,7 @@ type CompiledTemplateItem = {
 export class Runtime {
   private readonly providers: ReadonlyArray<TemplateProvider>;
   private readonly compiledTemplates = new Map<string, CompiledTemplateItem>();
+  private readonly filters = new Map<string, RuntimeFilter>();
   private readonly functions = new Map<string, RuntimeFunction>();
 
   private _cacheEnabled: boolean = true;
@@ -34,6 +36,40 @@ export class Runtime {
 
   public constructor(providers: ReadonlyArray<TemplateProvider>) {
     this.providers = providers;
+
+    this.registerFilter('currency', (_env, value, currency = '$', left = true) =>
+        left
+          ? `${currency} ${value}`
+          : `${value} ${currency}`
+      ,
+    );
+
+    this.registerFilter('trim', (_env, value) => `${value}`.trim());
+
+    this.registerFilter('substr', (_env, value, start, length) =>
+        `${value}`.substring(start, length === undefined ? undefined : start + length)
+      ,
+    );
+
+    this.registerFilter('substring', (_env, value, start, end) =>
+        `${value}`.substring(start, end)
+      ,
+    );
+
+    this.registerFilter('ucfirst', (_env, value) => {
+      const str = `${value}`;
+      return str.substring(0, 1).toUpperCase() + str.substring(1);
+    });
+
+    this.registerFilter('lcfirst', (_env, value) => {
+      const str = `${value}`;
+      return str.substring(0, 1).toLowerCase() + str.substring(1);
+    });
+
+    this.registerFilter('reverse', (_env, value) =>
+        `${value}`.split('').reverse().join('')
+      ,
+    );
 
     this.registerFunction('include', async function* (env, includedName, params) {
       yield* env.runtime.render(includedName, params);
@@ -96,6 +132,21 @@ export class Runtime {
     yield* environment.process(template.call(environment, environment));
   }
 
+  public getFilter(name: string): RuntimeFilter {
+    const fn = this.filters.get(name);
+    if (fn === undefined) {
+      throw new Error(`Filter '${name}' does not exist.`);
+    }
+    return fn;
+  }
+
+  public registerFilter(name: string, fn: RuntimeFilter, force: boolean = false): void {
+    if (!force && this.filters.has(name)) {
+      throw new Error(`Filter '${name}' is already registered.`);
+    }
+    this.filters.set(name, fn);
+  }
+
   public getFunction(name: string): RuntimeFunction {
     const fn = this.functions.get(name);
     if (fn === undefined) {
@@ -104,8 +155,8 @@ export class Runtime {
     return fn;
   }
 
-  public registerFunction(name: string, fn: RuntimeFunction): void {
-    if (this.functions.has(name)) {
+  public registerFunction(name: string, fn: RuntimeFunction, force: boolean = false): void {
+    if (!force && this.functions.has(name)) {
       throw new Error(`Function '${name}' is already registered.`);
     }
     this.functions.set(name, fn);

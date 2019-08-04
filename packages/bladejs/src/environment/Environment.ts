@@ -32,6 +32,8 @@ export interface Environment {
 
   print(text: any, escaped: boolean): AsyncIterable<string>;
 
+  filter(text: any, name: string, ...args: any[]): PromiseLike<string> | string;
+
   call(name: string, ...args: any[]): AsyncIterable<string>;
 
   extends(parent: string): AsyncIterable<string>;
