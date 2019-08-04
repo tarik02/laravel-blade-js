@@ -159,7 +159,7 @@ export class Compiler {
     this.builder.append('yield* __env.print(');
 
     this.builder.append((node.filters || []).reduce((prev, filter) => {
-      return `__env.filter(${prev}, ${JSON.stringify(filter.name)}${['', ...filter.args].join(', ')})`;
+      return `await __env.filter(${prev}, ${JSON.stringify(filter.name)}${['', ...filter.args].join(', ')})`;
     }, node.value));
 
     this.builder.append(', ');
