@@ -23,6 +23,10 @@ export type NodeData = BaseNode & {
   readonly type: 'data';
   readonly escaped: boolean;
   readonly value: string;
+  readonly filters?: ReadonlyArray<{
+    readonly name: string;
+    readonly args: ReadonlyArray<string>;
+  }>;
 };
 
 export type BaseFunction = BaseNode & {
