@@ -1,5 +1,6 @@
 /.idea
 /examples/*/node_modules
+/examples/*/yarn.lock
 /packages/*/node_modules
 /packages/*/lib
 yarn-error.log
