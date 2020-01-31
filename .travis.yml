@@ -24,7 +24,7 @@ deploy:
   skip_cleanup: true
   provider: npm
   email: Taras.Fomin@gmail.com
-  api_key:
+  token:
     secure: PaIPF2963OIwIdGAK0P81KisMATvHXneC9APPRe+NscunVF6+dfdu7Y3RHI3w4OvkQFlbcd8Lr7Be8T6FpviFaqygmObyRlQPknikEDKi6LWKDSOe9P61mIzvhSjStXoKcbOJ35V75ut8GxD3XQmbHOn1gGFyXGHfGwhRneAvo/JyPugxiYnrzIxRjhxzVlcCynnJoaF5+Lq9YOAMb/LZcYBbky8sbOjIf3LGVtpdXEfJZWDlkpDdufXrb4YUNKHlZHPXmnG3XVkfkfF7ZPbNGtU2mUx83iBAX9LeZmrT494FU6biVQEy+CpWHJQaMxR18g5oAHrjkzgRKCsb6q/ejpeWND0RrfcdP+p0tnYs1StXEegmlpzCjlHRWpY45S/2tHtSDX56i2E180GrwJQU23NI6xkINg9e07BW+oDnEwem+joZ02XrTZYMLA7ij/fdUldfcPyqZ9KVlK8+gERkf/hqsUf7+FQur5S/FO6aCrqbshxW3+8sv+OVIPp5KP8h20Z06Is/XfhOe6wDk5EJesc2SFT2D4v5a3Yym7WNdU21Qp83YLrFr9YNtKhs07RvuzbEbgqo3dc3qwCUxlXJXlmm1AEJZU7LN5qOzxrlWfwcdmYyBGbDJ521k+0OHU1EaMUJSyhTBOpjVQ1RTNnkrEd3ZFmYdtsZ3O58wbyRaM=
   on:
     tags: true
