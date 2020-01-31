@@ -489,8 +489,9 @@ export const createLexer = (input: Scanner, lexerConfig?: Partial<LexerConfig>):
 
   const peek = (): FullToken => {
     if (current === undefined) {
-      current = tokens.next().value;
+      return current = tokens.next().value;
     }
+
     return current;
   };
 
