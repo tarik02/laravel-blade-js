@@ -1,3 +1,4 @@
+import transpile = require('vue-template-es2015-compiler');
 import { CompilerError } from '../error/CompilerError';
 import { createLexer } from '../lexer/Lexer';
 import {
@@ -129,11 +130,19 @@ export class Compiler {
     });
 
     this.builder.append('(async function *(__env) {\n');
-    this.builder.append('eval(__env.serializeParams());');
+    this.builder.append('with (__env.params) {');
     this.compileNode(node);
-    this.footerBuilder.append('})');
+    this.footerBuilder.append('}})');
 
-    return this.builder.build() + this.footerBuilder.build();
+    return transpile(
+      this.builder.build() + this.footerBuilder.build(),
+      {
+        transforms: {
+          generator: false,
+          stripWithFunctional: true,
+        },
+      },
+    ).replace('var _c=_vm._c;', 'var _vm = __env.params;');
   }
 
   protected compileContainer(node: NodeContainer): void {

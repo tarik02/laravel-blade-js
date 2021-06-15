@@ -26,8 +26,6 @@ export interface Environment {
   readonly runtime: Runtime;
   readonly params: TemplateParams;
 
-  serializeParams(): string;
-
   process(input: AsyncIterable<string>): AsyncIterable<string>;
 
   print(text: any, escaped: boolean): AsyncIterable<string>;

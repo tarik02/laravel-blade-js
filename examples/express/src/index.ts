@@ -31,7 +31,7 @@ const templateProvider: TemplateProvider = {
       } else if ('code' in e && e.code === 'ENOENT') {
         console.error(`Template ${name} does not exist`);
       } else {
-        throw e;
+        console.error(e);
       }
     }
 
@@ -57,7 +57,9 @@ const writeView = async (res: Response, name: string, params?: TemplateParams): 
 };
 
 app.get('/', async (_req, res) => {
-  await writeView(res, 'index');
+  await writeView(res, 'index', {
+    myVar: 'My variable value',
+  });
   res.send();
 });
 
