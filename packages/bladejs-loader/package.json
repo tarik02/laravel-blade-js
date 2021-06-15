@@ -1,6 +1,6 @@
 {
   "name": "@tarik02/bladejs-loader",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "license": "MIT",
   "author": {
     "name": "Tarik02",
@@ -47,6 +47,6 @@
     "typescript": "^3.5.3"
   },
   "peerDependencies": {
-    "@tarik02/bladejs-compiler": "^2.1.0"
+    "@tarik02/bladejs-compiler": "^3.0.0"
   }
 }

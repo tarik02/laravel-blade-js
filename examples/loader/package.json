@@ -4,11 +4,11 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@tarik02/bladejs": "^2.1.0"
+    "@tarik02/bladejs": "^3.0.0"
   },
   "devDependencies": {
-    "@tarik02/bladejs-compiler": "^2.1.0",
-    "@tarik02/bladejs-loader": "^2.1.0",
+    "@tarik02/bladejs-compiler": "^3.0.0",
+    "@tarik02/bladejs-loader": "^3.0.0",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.6"
   }
